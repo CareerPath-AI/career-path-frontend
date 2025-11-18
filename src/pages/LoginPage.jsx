@@ -4,8 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../assets/div.svg';
 import emailLogo from '../assets/Vector.svg';
 import passwordLogo from '../assets/pass.svg';
-import { loginUser } from '../services/authService'; // 👈 importando o service
+import { loginUser } from '../services/authService'; 
 import './LoginPage.css';
+
+
+
 
 
 const LoginPage = ({ onForgotPassword }) => {

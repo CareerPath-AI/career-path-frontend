@@ -5,15 +5,26 @@ import logo from '../assets/div.svg'
 import emailLogo from '../assets/Vector.svg'
 import './RecoveryPage.css';
 
+import { resetPassword } from '../services/authService'; 
+
 const RecoveryPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Lógica de login aqui
-    console.log('Email:', email);
+    setError(' ');
+    try {
+      const data = await resetPassword(email);
+
+    } catch (err) {
+      console.error(err);
+      setError('Erro ao gerar link para resetar senha');
+    }
   };
+
+  
 
   return (
     <div className="login-container">

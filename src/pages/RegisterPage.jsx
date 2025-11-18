@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import logo from '../assets/div.svg';
 import emailLogo from '../assets/Vector.svg';
 import passwordLogo from '../assets/pass.svg';
-import { loginUser } from '../services/authService'; 
+import { registerUser } from '../services/authService'; 
 import './RegisterPage.css';
 
 const RegisterPage = ({ onForgotPassword }) => {
@@ -16,20 +16,15 @@ const RegisterPage = ({ onForgotPassword }) => {
     e.preventDefault();
     setError('');
 
-  //   try {
-      const data = await RegisterUser(name, email, password);
+    try {
+      const data = await registerUser(email, name, password);
+      alert('cadastro realizado com sucesso!');
+      window.location.href = '/';
 
-  //     // guarda os tokens
-  //     localStorage.setItem('access_token', data.access_token);
-  //     localStorage.setItem('refresh_token', data.refresh_token);
-
-  //     alert('Login realizado com sucesso!');
-  //     window.location.href = '/dashboard';
-
-  //   } catch (err) {
-  //     console.error(err);
-  //     setError('Email ou senha incorretos');
-  //   }
+    } catch (err) {
+      console.error(err);
+      setError('erro ao cadastrar');
+    }
   };
 
   return (
@@ -54,7 +49,7 @@ const RegisterPage = ({ onForgotPassword }) => {
                 type="name"
                 className="form-input"
                 placeholder="Digite seu nome completo"
-                value={email}
+                value={name}
                 onChange={(e) => setName(e.target.value)}
                 required
               />
