@@ -63,3 +63,24 @@ export async function resetPassword(password) {
 
   return await response.json();
 }
+
+export async function uploadResume(file) {
+  const token = localStorage.getItem('access_token');
+  
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_URL}/api/v1/resume/upload`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error('Erro ao fazer upload do currículo');
+  }
+
+  return await response.json();
+}
