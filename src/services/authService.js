@@ -32,17 +32,33 @@ export async function loginUser(email, password) {
   return await response.json();
 }
 
-export async function resetPassword(email) {
+export async function emailResetPassword(token, email) {
   const response = await fetch(`${API_URL}/api/v1/auth/forgot-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ token, email }),
   });
 
   if (!response.ok) {
     throw new Error('email inválido');
+  }
+
+  return await response.json();
+}
+
+export async function resetPassword(password) {
+  const response = await fetch(`${API_URL}/api/v1/auth/reset-password`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ password }),
+  });
+
+  if (!response.ok) {
+    throw new Error('senha inválida');
   }
 
   return await response.json();
