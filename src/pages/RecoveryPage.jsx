@@ -5,7 +5,7 @@ import logo from '../assets/div.svg'
 import emailLogo from '../assets/Vector.svg'
 import './RecoveryPage.css';
 
-import { resetPassword } from '../services/authService'; 
+import { emailResetPassword } from '../services/authService'; 
 
 const RecoveryPage = () => {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ const RecoveryPage = () => {
     e.preventDefault();
     setError(' ');
     try {
-      const data = await resetPassword(email);
+      const data = await emailResetPassword(email);
 
     } catch (err) {
       console.error(err);

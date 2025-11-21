@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import logo from '../assets/div.svg'
 import passwordLogo from '../assets/pass.svg';
 import './RecoveryPage.css';
 
+import { resetPassword } from '../services/authService'; 
+
 const ResetPassPage = () => {
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const token = params.get("token");  
   const [firstPassword, setFirstPassword] = useState('');
   const [secondPassword, setSecondPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -19,6 +23,16 @@ const ResetPassPage = () => {
       setError('As senhas não coincidem');
       return;
     }
+
+    try {
+          const data = await resetPassword(token, firstPassword);
+    
+        } catch (err) {
+          console.error(err);
+          setError('Erro ao gerar link para resetar senha');
+        }
+
+
 
     console.log("senhas identicas")
   };
