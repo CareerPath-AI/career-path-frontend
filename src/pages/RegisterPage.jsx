@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import logo from '../assets/div.svg';
 import emailLogo from '../assets/Vector.svg';
 import passwordLogo from '../assets/pass.svg';
+import caba from '../assets/caba.svg';
 import { registerUser } from '../services/authService'; 
 import './RegisterPage.css';
 
@@ -19,7 +20,7 @@ const RegisterPage = ({ onForgotPassword }) => {
     try {
       const data = await registerUser(email, name, password);
       alert('cadastro realizado com sucesso!');
-      window.location.href = '/';
+      window.location.href = '/login';
 
     } catch (err) {
       console.error(err);
@@ -44,7 +45,7 @@ const RegisterPage = ({ onForgotPassword }) => {
           <div className="form-group">
             <label className="form-label">Nome</label>
             <div className="input-icon-container">
-              {/* <img src={emailLogo} alt="ícone de e-mail" className="input-icon" /> */}
+              <img src={caba} alt="ícone de e-mail" className="input-icon" />
               <input
                 type="name"
                 className="form-input"

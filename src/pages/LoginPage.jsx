@@ -29,8 +29,8 @@ const LoginPage = ({ onForgotPassword }) => {
       localStorage.setItem('access_token', data.access_token);
       localStorage.setItem('refresh_token', data.refresh_token);
 
-      alert('Login realizado com sucesso!');
-      // window.location.href = '/dashboard';
+      // alert('Login realizado com sucesso!');
+      window.location.href = '/home';
 
     } catch (err) {
       console.error(err);
