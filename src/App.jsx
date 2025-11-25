@@ -12,7 +12,7 @@ function App() {
   return (
     <div>
       {/* DESCOMENTE PARA TESTAR PAGINAS KK */}
-      {/* <nav>
+      <nav>
         <ul>
           <li><Link to="/login">Login</Link></li>
           <li><Link to="/recovery">Recuperar Senha</Link></li>
@@ -21,7 +21,7 @@ function App() {
           <li><Link to="/upload">upload</Link></li>
           <li><Link to="/home">home</Link></li>
         </ul>
-      </nav> */}
+      </nav>
 
       {/* Rotas */}
       <Routes>

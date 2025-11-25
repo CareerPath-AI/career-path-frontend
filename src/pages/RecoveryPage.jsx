@@ -17,6 +17,7 @@ const RecoveryPage = () => {
     setError(' ');
     try {
       const data = await emailResetPassword(email);
+      alert("Se o e-mail existir, enviaremos instruções para redefinir sua senha.");
 
     } catch (err) {
       console.error(err);

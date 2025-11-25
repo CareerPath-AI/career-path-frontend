@@ -26,6 +26,8 @@ const ResetPassPage = () => {
 
     try {
           const data = await resetPassword(token, firstPassword);
+          alert("Senha redefinida com sucesso!");
+          window.location.href = "/login";
     
         } catch (err) {
           console.error(err);

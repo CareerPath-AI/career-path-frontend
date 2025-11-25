@@ -23,11 +23,16 @@ const LoginPage = ({ onForgotPassword }) => {
     setError('');
 
     try {
-      const data = await loginUser(email, password);
+      const response = await loginUser(email, password);
+      const user = response.data;
+      const tokens = response.tokens;
 
-      // guarda os tokens
-      localStorage.setItem('access_token', data.access_token);
-      localStorage.setItem('refresh_token', data.refresh_token);
+      // guarda os tokens corretamente
+      localStorage.setItem('access_token', tokens.access_token);
+      localStorage.setItem('refresh_token', tokens.refresh_token);
+
+      // salva o user como JSON
+      localStorage.setItem('user', JSON.stringify(user));
 
       // alert('Login realizado com sucesso!');
       window.location.href = '/home';

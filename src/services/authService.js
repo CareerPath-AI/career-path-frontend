@@ -32,13 +32,13 @@ export async function loginUser(email, password) {
   return await response.json();
 }
 
-export async function emailResetPassword(token, email) {
+export async function emailResetPassword(email) {
   const response = await fetch(`${API_URL}/api/v1/auth/forgot-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ token, email }),
+    body: JSON.stringify({ email }),
   });
 
   if (!response.ok) {
@@ -48,13 +48,16 @@ export async function emailResetPassword(token, email) {
   return await response.json();
 }
 
-export async function resetPassword(password) {
+export async function resetPassword(token, password) {
   const response = await fetch(`${API_URL}/api/v1/auth/reset-password`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ password }),
+    body: JSON.stringify({
+      reset_token: token,
+      new_password: password
+    }),
   });
 
   if (!response.ok) {
@@ -63,6 +66,7 @@ export async function resetPassword(password) {
 
   return await response.json();
 }
+
 
 export async function uploadResume(file) {
   const token = localStorage.getItem('access_token');
@@ -84,3 +88,6 @@ export async function uploadResume(file) {
 
   return await response.json();
 }
+
+
+
