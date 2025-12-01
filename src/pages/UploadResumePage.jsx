@@ -100,7 +100,11 @@ const UploadResumePage = () => {
     <div className="upload-container">
       {/* Header/Navigation */}
       <header className="upload-header">
-        <div className="header-left">
+        <div 
+          className="header-left" 
+          onClick={() => navigate("/home")} 
+          style={{ cursor: 'pointer' }}
+        >
           <div className="logo-box-header">
             <img src={logo} alt="Logo" />
           </div>

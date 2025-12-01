@@ -1,0 +1,187 @@
+/* ======== BASE ======== */
+.historico-container {
+  width: 100%;
+  min-height: 100vh;
+  background: #e8f1fc;
+  font-family: "Inter", sans-serif;
+}
+
+.upload-header {
+  background: #fff;
+  padding: 12px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-box-header img {
+  width: 40px;
+}
+
+.app-name {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.nav-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  padding: 8px 14px;
+  border-radius: 6px;
+}
+
+.nav-link.active,
+.nav-link:hover {
+  background: #e6f0ff;
+  color: #0a58ff;
+}
+
+/* ======== MAIN ======== */
+.historico-main {
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.title-page {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 30px;
+  text-align: center;
+}
+
+/* ======== FILTROS ======== */
+.filter-bar {
+  background: white;
+  padding: 20px;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.select-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+/* ======== LISTA ======== */
+.lista-card {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.card {
+  padding: 25px;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card h3 {
+  margin: 0 0 12px 0;
+  font-size: 18px;
+}
+
+.card p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.id {
+  background: #f1f3f7;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-family: monospace;
+}
+
+.arrow {
+  background: #eaf2ff;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.divider {
+  position: absolute;
+  bottom: 0;
+  left: 25px;
+  right: 25px;
+  height: 1px;
+  background: #eee;
+}
+
+/* ======== PAGINAÇÃO ======== */
+.pagination {
+  margin-top: 25px;
+  background: white;
+  padding: 18px;
+  border-radius: 14px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pagination button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+}
+
+.pagination button.active {
+  background: #0a58ff;
+  color: white;
+  border-color: #0a58ff;
+}
+
+.pagination button:disabled {
+  background: #f3f3f3;
+  cursor: not-allowed;
+}
+
+.header-left {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.header-left:hover {
+  opacity: 0.8;
+}
