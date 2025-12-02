@@ -140,24 +140,13 @@ const HomePage = () => {
                   <h3>Desenvolvedor Full Stack</h3>
                   <span className="track-status">Em andamento</span>
                 </div>
-                <div className="progress-bar">
-                  <div className="progress" style={{width: '65%'}}></div>
-                </div>
-                <div className="track-info">
-                  Progresso: 65% | 45 horas
-                </div>
+
               </div>
 
               <div className="track">
                 <div className="track-header">
                   <h3>Análise de Dados</h3>
                   <span className="track-status green">Concluída</span>
-                </div>
-                <div className="progress-bar">
-                  <div className="progress green" style={{width: '100%'}}></div>
-                </div>
-                <div className="track-info">
-                  Progresso: 100% | 60 horas
                 </div>
               </div>
             </section>
@@ -183,29 +172,6 @@ const HomePage = () => {
               </div>
             </section>
 
-            {/* Análises de Currículo Recentes */}
-            <section className="box">
-              <div className="box-header">
-                <h2>Análises Recentes</h2>
-                <button className="see-more" onClick={goToHistoricoCurriculos}>
-                  Ver todas
-                </button>
-              </div>
-              
-              {/* Currículos clicáveis */}
-              <div className="resume-item clickable" onClick={goToHistoricoCurriculos}>
-                <strong>Currículo_v3.pdf</strong>
-                <div className="time-info">Enviado há 2 dias</div>
-              </div>
-              <div className="resume-item clickable" onClick={goToHistoricoCurriculos}>
-                <strong>cv_maria_2024.pdf</strong>
-                <div className="time-info">Enviado há 1 semana</div>
-              </div>
-              <div className="resume-item clickable" onClick={goToHistoricoCurriculos}>
-                <strong>resume_updated.pdf</strong>
-                <div className="time-info">Enviado há 2 semanas</div>
-              </div>
-            </section>
           </div>
         </div>
       </main>
