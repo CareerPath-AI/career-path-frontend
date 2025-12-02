@@ -2,9 +2,9 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/div.svg";
 import UserProfile from "../components/UserProfile";
-import "./HistoricoTrilhasPage.css";
+import "./StudyTrailHistoryPage.css";
 
-const HistoricoTrilhasPage = () => {
+const StudyTrailHistoryPage = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem("user")) || { name: "Usuário" };
 
@@ -50,8 +50,15 @@ const HistoricoTrilhasPage = () => {
   const trilhasPaginaAtual = trilhasFiltradas.slice(indexUltimo - itensPorPagina, indexUltimo);
   const totalPaginas = Math.ceil(trilhasFiltradas.length / itensPorPagina);
 
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+  };
+
   return (
-    <div className="historico-container">
+    <div className="study-trail-container">
       <header className="upload-header">
         <div 
           className="header-left" 
@@ -65,13 +72,18 @@ const HistoricoTrilhasPage = () => {
         </div>
 
         <nav className="header-nav">
-          <button className="nav-link active">Histórico</button>
+          <button 
+            className="nav-link" 
+            onClick={() => navigate("/interview-guide")}
+          >
+            Guia de Entrevista
+          </button>
           <button className="nav-link">Configurações</button>
-          <UserProfile user={user} />
+          <UserProfile user={user} onLogout={handleLogout} />
         </nav>
       </header>
 
-      <main className="historico-main">
+      <main className="study-trail-main">
         <h1 className="title-page">Histórico de Trilhas Criadas</h1>
 
         <div className="filter-bar">
@@ -129,4 +141,4 @@ const HistoricoTrilhasPage = () => {
   );
 };
 
-export default HistoricoTrilhasPage;
+export default StudyTrailHistoryPage;

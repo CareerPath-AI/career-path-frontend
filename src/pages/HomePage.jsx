@@ -32,6 +32,10 @@ const HomePage = () => {
     navigate("/historico-trilhas");
   };
 
+  const goToHistoricoGuias = () => {
+    navigate("/historico-guias");
+  };
+
   return (
     <div className="dashboard-container">
       {/* Header */}
@@ -47,9 +51,8 @@ const HomePage = () => {
           <span className="app-name">CareerPathAI</span>
         </div>
 
-        {/* NAVBAR com DROPDOWN - HISTÓRICO AGORA É DE TRILHAS */}
+        {/* NAVBAR - Botão de Histórico REMOVIDO conforme solicitado */}
         <nav className="header-nav">
-          <button className="nav-link" onClick={goToHistoricoTrilhas}>Histórico</button>
           <button className="nav-link">Configurações</button>
           <UserProfile user={user} onLogout={handleLogout} />
         </nav>
@@ -63,9 +66,7 @@ const HomePage = () => {
             <p>Continue sua jornada de desenvolvimento profissional com análises inteligentes.</p>
           </div>
 
-          <button className="welcome-btn" onClick={goToUpload}>
-            + Nova Análise de Currículo
-          </button>
+          {/* Botão REMOVIDO conforme solicitado */}
         </div>
 
         {/* Top Cards */}
@@ -101,9 +102,9 @@ const HomePage = () => {
               <div className="box-header">
                 <div className="box-header-left">
                   <img src={balaoLogo} alt="ícone" />
-                  <h2>Minhas Conversas Recentes</h2>
+                  <h2>Meus Guias de Entrevista</h2>
                 </div>
-                <button className="see-more">Ver todas</button>
+                <button className="see-more" onClick={goToHistoricoGuias}>Ver todos</button>
               </div>
 
               <div className="guide-item">
@@ -170,8 +171,8 @@ const HomePage = () => {
                 <h2>Ações Rápidas</h2>
               </div>
               <div className="actions-box">
-                <button className="action-button blue-btn" onClick={goToUpload}>
-                  Enviar Currículo
+                <button className="action-button blue-btn" onClick={() => navigate("/upload")}>
+                  Análise de Currículo
                 </button>
                 <button className="action-button gray-btn" onClick={() => navigate("/interview-guide")}>
                   Guia de entrevista
@@ -182,10 +183,10 @@ const HomePage = () => {
               </div>
             </section>
 
-            {/* Currículos Recentes - ÚNICO ACESSO AO HISTÓRICO DE CURRÍCULOS */}
+            {/* Análises de Currículo Recentes */}
             <section className="box">
               <div className="box-header">
-                <h2>Currículos Recentes</h2>
+                <h2>Análises Recentes</h2>
                 <button className="see-more" onClick={goToHistoricoCurriculos}>
                   Ver todas
                 </button>

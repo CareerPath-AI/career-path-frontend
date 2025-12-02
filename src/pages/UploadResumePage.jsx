@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import logo from '../assets/div.svg';
-import { uploadResume } from '../services/authService';
 import './UploadResumePage.css';
 
 const UploadResumePage = () => {
@@ -76,10 +75,13 @@ const UploadResumePage = () => {
     setError('');
 
     try {
-      const data = await uploadResume(selectedFile);
-      alert('Currículo enviado com sucesso!');
-      // Redirecionar para página de análise ou dashboard
-      // navigate('/dashboard');
+      // Simulando o upload (em produção, use uploadResume(selectedFile))
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // REDIRECIONA PARA A PÁGINA DE ANÁLISE APÓS O UPLOAD
+      // Gerar um ID aleatório ou usar o ID retornado pelo backend
+      const analysisId = Math.floor(Math.random() * 1000) + 1;
+      navigate(`/analise-curriculo/${analysisId}`);
       
     } catch (err) {
       console.error(err);
@@ -111,11 +113,20 @@ const UploadResumePage = () => {
           <span className="app-name">CareerPathAI</span>
         </div>
         <nav className="header-nav">
-          <button className="nav-link">Histórico</button>
-          <button className="nav-link">Configurações</button>
+          <button 
+            className="nav-link" 
+            onClick={() => navigate('/historico-curriculos')}
+          >
+            Histórico
+          </button>
+          <button 
+            className="nav-link" 
+            onClick={() => navigate('/home')}
+          >
+            Dashboard
+          </button>
           <div className="user-profile">
-            <span className="user-name">Mario Silva</span>
-            <div className="user-avatar">MS</div>
+            <div className="user-avatar">U</div>
             <span className="dropdown-arrow">▼</span>
           </div>
         </nav>
@@ -127,7 +138,7 @@ const UploadResumePage = () => {
           <div className="upload-header-section">
             <h1 className="upload-title">Análise Inteligente de Currículo</h1>
             <p className="upload-description">
-              Nossa IA avalia seu currículo e cria uma trilha de estudos personalizada para acelerar sua carreira
+              Envie seu currículo em PDF e nossa IA criará uma análise detalhada com sugestões de melhoria
             </p>
           </div>
 
@@ -183,7 +194,7 @@ const UploadResumePage = () => {
               className="analyze-button"
               disabled={!selectedFile || isUploading}
             >
-              {isUploading ? 'Enviando...' : '✓ Analisar Currículo'}
+              {isUploading ? 'Analisando...' : '✓ Analisar Currículo'}
             </button>
           </form>
         </div>
@@ -193,4 +204,3 @@ const UploadResumePage = () => {
 };
 
 export default UploadResumePage;
-

@@ -1,6 +1,6 @@
-/* HistoricoCurriculosPage.css */
+/* ResumeAnalysisHistoryPage.css - ATUALIZADO */
 /* ======== BASE ======== */
-.historico-curriculos-container {
+.resume-analysis-container {
   width: 100%;
   min-height: 100vh;
   background: #f5f7fa;
@@ -57,18 +57,17 @@
   font-weight: 500;
   cursor: pointer;
   padding: 8px 12px;
-  transition: color 0.2s ease;
+  border-radius: 6px;
+  transition: all 0.2s ease;
 }
 
-.nav-link.active,
 .nav-link:hover {
   color: #2563EB;
   background: #f0f7ff;
-  border-radius: 6px;
 }
 
 /* ======== MAIN CONTENT ======== */
-.historico-curriculos-main {
+.resume-analysis-main {
   max-width: 900px;
   margin: 0 auto;
   padding: 40px 20px;
@@ -145,77 +144,124 @@
   border-color: #2563EB;
 }
 
-/* ======== CURRICULOS LIST ======== */
-.lista-curriculos {
+/* ======== ANÁLISES LIST ======== */
+.analises-list {
   padding: 0;
 }
 
-.curriculo-card {
+.analise-card {
   padding: 24px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   position: relative;
   transition: background-color 0.2s ease;
 }
 
-.curriculo-card:hover {
+.analise-card:hover {
   background-color: #fafbfc;
 }
 
-.curriculo-info {
+.analise-info {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 16px;
   flex: 1;
 }
 
-.file-icon {
+.analise-icon {
   font-size: 24px;
-  width: 40px;
-  height: 40px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: #f0f7ff;
-  border-radius: 8px;
+  border-radius: 12px;
+  color: #2563EB;
 }
 
-.file-details {
+.analise-details {
   flex: 1;
 }
 
-.file-name {
-  font-size: 16px;
+.analise-title {
+  font-size: 18px;
   font-weight: 600;
   color: #333;
-  margin: 0 0 6px 0;
+  margin: 0 0 12px 0;
 }
 
-.file-meta {
+.analise-meta {
   display: flex;
   align-items: center;
   gap: 12px;
   font-size: 14px;
   color: #666;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
 }
 
-.file-date {
+.analise-cargo {
   font-weight: 500;
+  color: #444;
 }
 
-.file-size, .file-status {
+.analise-date, .analise-duration, .analise-status {
   color: #888;
 }
 
-.curriculo-actions {
+.analise-tags {
   display: flex;
+  flex-direction: column;
   gap: 12px;
 }
 
+.tags-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tags-label {
+  font-size: 13px;
+  color: #666;
+  font-weight: 500;
+  min-width: 100px;
+}
+
+.tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  padding: 4px 10px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.tag-green {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.tag-blue {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.analise-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+}
+
 .action-btn {
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 10px 20px;
+  border-radius: 8px;
   border: 1px solid #d1d5db;
   background: white;
   font-size: 14px;
@@ -231,16 +277,6 @@
 
 .view-btn:hover {
   background: #2563EB;
-  color: white;
-}
-
-.download-btn {
-  color: #059669;
-  border-color: #059669;
-}
-
-.download-btn:hover {
-  background: #059669;
   color: white;
 }
 
@@ -314,7 +350,7 @@
 
 /* ======== RESPONSIVIDADE ======== */
 @media (max-width: 768px) {
-  .historico-curriculos-main {
+  .resume-analysis-main {
     padding: 20px 15px;
   }
 
@@ -340,13 +376,19 @@
     align-items: flex-start;
   }
 
-  .curriculo-card {
+  .analise-card {
     flex-direction: column;
     align-items: flex-start;
     gap: 16px;
   }
 
-  .curriculo-actions {
+  .analise-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  .analise-actions {
     width: 100%;
     justify-content: flex-end;
   }
@@ -368,17 +410,17 @@
     border-radius: 12px;
   }
 
-  .curriculo-card {
+  .analise-card {
     padding: 20px;
   }
 
-  .file-meta {
+  .tags-section {
     flex-direction: column;
     align-items: flex-start;
-    gap: 4px;
+    gap: 8px;
   }
 
-  .curriculo-actions {
+  .analise-actions {
     flex-direction: column;
     width: 100%;
   }

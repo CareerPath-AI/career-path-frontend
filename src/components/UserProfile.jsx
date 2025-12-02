@@ -1,4 +1,3 @@
-// components/UserProfile.jsx - ATUALIZADO
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -17,6 +16,11 @@ const UserProfile = ({ user, onLogout }) => {
 
   const handleHistoricoTrilhas = () => {
     navigate("/historico-trilhas");
+    setIsDropdownOpen(false);
+  };
+
+  const handleHistoricoGuias = () => {
+    navigate("/historico-guias");
     setIsDropdownOpen(false);
   };
 
@@ -44,7 +48,7 @@ const UserProfile = ({ user, onLogout }) => {
           border: '1px solid #e5e7eb',
           borderRadius: '8px',
           boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-          minWidth: '200px',
+          minWidth: '220px',
           zIndex: 1000,
           marginTop: '8px'
         }}>
@@ -52,7 +56,8 @@ const UserProfile = ({ user, onLogout }) => {
             padding: '12px 16px',
             borderBottom: '1px solid #e5e7eb',
             fontWeight: '600',
-            color: '#333'
+            color: '#333',
+            fontSize: '14px'
           }}>
             {user?.email || 'user@example.com'}
           </div>
@@ -61,45 +66,70 @@ const UserProfile = ({ user, onLogout }) => {
             onClick={handleHistoricoCurriculos}
             style={{
               width: '100%',
-              padding: '12px 16px',
+              padding: '10px 16px',
               border: 'none',
               background: 'none',
               textAlign: 'left',
               cursor: 'pointer',
+              fontSize: '14px',
+              color: '#374151',
               borderBottom: '1px solid #f3f4f6'
             }}
             onMouseEnter={(e) => e.target.style.background = '#f9fafb'}
             onMouseLeave={(e) => e.target.style.background = 'none'}
           >
-            Histórico de Currículos
+            Histórico de Análise de Currículos
           </button>
 
           <button 
             onClick={handleHistoricoTrilhas}
             style={{
               width: '100%',
-              padding: '12px 16px',
+              padding: '10px 16px',
               border: 'none',
               background: 'none',
               textAlign: 'left',
               cursor: 'pointer',
+              fontSize: '14px',
+              color: '#374151',
               borderBottom: '1px solid #f3f4f6'
             }}
             onMouseEnter={(e) => e.target.style.background = '#f9fafb'}
             onMouseLeave={(e) => e.target.style.background = 'none'}
           >
-            Histórico de Trilhas
+            Histórico de Trilhas de Estudo
+          </button>
+
+          <button 
+            onClick={handleHistoricoGuias}
+            style={{
+              width: '100%',
+              padding: '10px 16px',
+              border: 'none',
+              background: 'none',
+              textAlign: 'left',
+              cursor: 'pointer',
+              fontSize: '14px',
+              color: '#374151',
+              borderBottom: '1px solid #f3f4f6'
+            }}
+            onMouseEnter={(e) => e.target.style.background = '#f9fafb'}
+            onMouseLeave={(e) => e.target.style.background = 'none'}
+          >
+            Histórico de Guias de Entrevista
           </button>
 
           <button 
             onClick={handleConfiguracoes}
             style={{
               width: '100%',
-              padding: '12px 16px',
+              padding: '10px 16px',
               border: 'none',
               background: 'none',
               textAlign: 'left',
               cursor: 'pointer',
+              fontSize: '14px',
+              color: '#374151',
               borderBottom: '1px solid #f3f4f6'
             }}
             onMouseEnter={(e) => e.target.style.background = '#f9fafb'}
@@ -112,17 +142,18 @@ const UserProfile = ({ user, onLogout }) => {
             onClick={onLogout}
             style={{
               width: '100%',
-              padding: '12px 16px',
+              padding: '10px 16px',
               border: 'none',
               background: 'none',
               textAlign: 'left',
               cursor: 'pointer',
+              fontSize: '14px',
               color: '#dc2626'
             }}
             onMouseEnter={(e) => e.target.style.background = '#fef2f2'}
             onMouseLeave={(e) => e.target.style.background = 'none'}
           >
-            Sair
+            🚪 Sair
           </button>
         </div>
       )}
