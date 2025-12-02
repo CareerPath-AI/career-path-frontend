@@ -7,6 +7,7 @@ import RegisterPage from "./pages/RegisterPage";
 import ResetPassPage from "./pages/ResetPassPage";
 import UploadResumePage from "./pages/UploadResumePage";
 import HomePage from "./pages/HomePage";
+import DevelopmentTrailPage from "./pages/DevelopmentTrailPage";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <li><Link to="/reset">Reset</Link></li>
           <li><Link to="/upload">upload</Link></li>
           <li><Link to="/home">home</Link></li>
+          <li><Link to="/trail/1">Trilha</Link></li>
         </ul>
       </nav>
 
@@ -31,6 +33,7 @@ function App() {
         <Route path="/reset" element={<ResetPassPage />} />
         <Route path="/upload" element={<UploadResumePage />} />
         <Route path="/home" element={<HomePage />} />
+        <Route path="/trail/:id" element={<DevelopmentTrailPage />} />
       </Routes>
     </div>
   );
