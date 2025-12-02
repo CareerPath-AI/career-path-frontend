@@ -176,7 +176,7 @@ const HomePage = () => {
                 <button className="action-button gray-btn" onClick={() => navigate("/interview-guide")}>
                   Guia de entrevista
                 </button>
-                <button className="action-button purple-btn">
+                <button className="action-button purple-btn" onClick={() => navigate("/vocational-form")}>
                   Criar trilha de estudo
                 </button>
               </div>

@@ -94,7 +94,16 @@ const HistoricoTrilhasPage = () => {
                 <p>Criada em <strong>{t.dataCriacao}</strong></p>
                 <p>ID: <span className="id">{t.id}</span></p>
               </div>
-              <button className="arrow">{">"}</button>
+              <button className="arrow" onClick={() => navigate('/vocational-form-response', { 
+                state: { 
+                  formData: {
+                    professional_goal: t.titulo.split(' ').slice(-2).join(' '),
+                    // outros dados mockados conforme necessário
+                  }
+                } 
+              })}>
+                {">"}
+              </button>
               {i < trilhasPaginaAtual.length - 1 && <div className="divider" />}
             </div>
           ))}

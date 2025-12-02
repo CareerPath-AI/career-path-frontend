@@ -11,6 +11,8 @@ import HistoricoTrilhasPage from "./pages/HistoricoTrilhasPage";
 import HistoricoCurriculosPage from './pages/HistoricoCurriculosPage';
 import InterviewGuidePage from './pages/InterviewGuidePage';
 import InterviewGuideResultPage from './pages/InterviewGuideResultPage';
+import VocationalFormPage from './pages/VocationalFormPage';
+import VocationalTrailResultPage from './pages/VocationalTrailResultPage';
 
 function App() {
   return (
@@ -28,7 +30,8 @@ function App() {
           <li><Link to="/historico-curriculos">Histórico de Currículos</Link></li>
           <li><Link to="/interview-guide">Guia de Entrevista</Link></li>
           <li><Link to="/interview-guide-result">Resposta da Guia de Entrevista</Link></li>
-          
+          <li><Link to="/vocational-form">Criar Trilha de Estudo</Link></li>
+          <li><Link to="/vocational-form-response">Resposta da Trilha de Estudo</Link></li>
         </ul>
       </nav>
 
@@ -44,6 +47,8 @@ function App() {
         <Route path="/historico-curriculos" element={<HistoricoCurriculosPage />} />
         <Route path="/interview-guide" element={<InterviewGuidePage />} />
         <Route path="/interview-guide-result" element={<InterviewGuideResultPage />} />
+        <Route path="/vocational-form" element={<VocationalFormPage />} />
+        <Route path="/vocational-form-response" element={<VocationalTrailResultPage />} />
       </Routes>
     </div>
   );
