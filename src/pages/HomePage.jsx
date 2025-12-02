@@ -23,6 +23,10 @@ const HomePage = () => {
     navigate("/upload");
   };
 
+  const goToConfig = () => {
+    navigate("/config");
+  };
+
   return (
     <div className="dashboard-container">
 
@@ -38,7 +42,7 @@ const HomePage = () => {
         {/* NAVBAR com DROPDOWN */}
         <nav className="header-nav">
           <button className="nav-link">Histórico</button>
-          <button className="nav-link">Configurações</button>
+          <button className="nav-link" onClick={goToConfig}>Configurações</button>
 
           {/* <-- AQUI Entrou o componente UserProfile --> */}
           <UserProfile user={user} onLogout={handleLogout} />

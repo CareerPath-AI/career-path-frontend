@@ -67,7 +67,6 @@ export async function resetPassword(token, password) {
   return await response.json();
 }
 
-
 export async function uploadResume(file) {
   const token = localStorage.getItem('access_token');
   
@@ -87,6 +86,36 @@ export async function uploadResume(file) {
   }
 
   return await response.json();
+}
+
+export async function excludeUser(password) {
+  const accessToken = localStorage.getItem('access_token');
+
+  const response = await fetch(`${API_URL}/api/v1/users/me/delete`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,   
+    },
+    body: JSON.stringify({ password }),
+  });
+
+  return response.json(); 
+}
+
+export async function EditUserName(name) {
+  const accessToken = localStorage.getItem('access_token');
+
+  const response = await fetch(`${API_URL}/api/v1/users/me`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${accessToken}`,   
+    },
+    body: JSON.stringify({ name }),
+  });
+
+  return response.json(); 
 }
 
 
