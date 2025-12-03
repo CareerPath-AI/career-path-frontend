@@ -1,12 +1,11 @@
 import React from 'react';
 import { useNavigate } from "react-router-dom";
-import logo from '../assets/div.svg';
 import './HomePage.css';
 import conversasLogo from '../assets/conversas.svg';
 import pdfLogo from '../assets/pdf.svg';
 import trilhaLogo from '../assets/trilha.svg';
 import balaoLogo from '../assets/balaoDeConversa.svg';
-import UserProfile from "../components/UserProfile";
+import Header from '../components/Header'; // Importando o Header separado
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -30,24 +29,12 @@ const HomePage = () => {
   return (
     <div className="dashboard-container">
 
-      {/* Header */}
-      <header className="upload-header">
-        <div className="header-left">
-          <div className="logo-box-header">
-            <img src={logo} alt="Logo" />
-          </div>
-          <span className="app-name">CareerPathAI</span>
-        </div>
-
-        {/* NAVBAR com DROPDOWN */}
-        <nav className="header-nav">
-          <button className="nav-link">Histórico</button>
-          <button className="nav-link" onClick={goToConfig}>Configurações</button>
-
-          {/* <-- AQUI Entrou o componente UserProfile --> */}
-          <UserProfile user={user} onLogout={handleLogout} />
-        </nav>
-      </header>
+      {/* Header Component */}
+      <Header 
+        user={user} 
+        onLogout={handleLogout} 
+        onConfig={goToConfig}
+      />
 
       {/* MAIN CONTENT */}
       <main className="dashboard-main">

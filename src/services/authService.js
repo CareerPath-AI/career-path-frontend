@@ -118,5 +118,54 @@ export async function EditUserName(name) {
   return response.json(); 
 }
 
+export async function getDevelopmentTrails() {
+  const token = localStorage.getItem('access_token');
+  
+  const response = await fetch(`${API_URL}/development-trail/`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
 
+  if (!response.ok) {
+    throw new Error('Erro ao buscar trilhas de desenvolvimento');
+  }
+
+  return await response.json();
+}
+
+export async function getDevelopmentTrailById(trailId) {
+  const token = localStorage.getItem('access_token');
+  
+  if (!token) {
+    throw new Error('Token de autenticação não encontrado');
+  }
+
+  const response = await fetch(`${API_URL}/development-trail/${trailId}`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    let errorMessage = 'Erro ao buscar trilha de desenvolvimento';
+    
+    if (response.status === 404) {
+      errorMessage = 'Trilha não encontrada';
+    } else if (response.status === 401) {
+      errorMessage = 'Não autorizado';
+    } else if (response.status === 403) {
+      errorMessage = 'Acesso negado';
+    }
+    
+    const error = new Error(errorMessage);
+    error.status = response.status;
+    throw error;
+  }
+
+  return await response.json();
+}
 
