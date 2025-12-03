@@ -1,53 +1,51 @@
 import React from 'react';
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 import conversasLogo from '../assets/conversas.svg';
 import pdfLogo from '../assets/pdf.svg';
 import trilhaLogo from '../assets/trilha.svg';
 import balaoLogo from '../assets/balaoDeConversa.svg';
-import Header from '../components/Header'; // Importando o Header separado
+import Header from '../components/Header'; // Usando o Header component
 
 const HomePage = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem('user'));
 
   const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
-    localStorage.removeItem("user");
-    window.location.href = "/login";
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
   };
 
   const goToUpload = () => {
-    navigate("/upload");
+    navigate('/upload');
   };
 
-  const goToConfig = () => {
-    navigate("/config");
+  const goToHistoricoCurriculos = () => {
+    navigate('/historico-curriculos');
+  };
+
+  const goToHistoricoTrilhas = () => {
+    navigate('/historico-trilhas');
+  };
+
+  const goToHistoricoGuias = () => {
+    navigate('/historico-guias');
   };
 
   return (
     <div className="dashboard-container">
-
-      {/* Header Component */}
-      <Header 
-        user={user} 
-        onLogout={handleLogout} 
-        onConfig={goToConfig}
-      />
+      {/* Usando o Header component */}
+      <Header user={user} onLogout={handleLogout} />
 
       {/* MAIN CONTENT */}
       <main className="dashboard-main">
-
         <div className="welcome-container">
           <div className="welcome-texts">
-            <h2>Bem-vinda de volta, {user?.name.split(" ")[0]}</h2>
+            <h2>Bem-vinda de volta, {user?.name.split(' ')[0]}!</h2>
             <p>Continue sua jornada de desenvolvimento profissional com análises inteligentes.</p>
           </div>
-
-          <button className="welcome-btn" onClick={goToUpload}>
-            + Nova Análise de Currículo
-          </button>
         </div>
 
         {/* Top Cards */}
@@ -74,41 +72,89 @@ const HomePage = () => {
           </div>
         </section>
 
-        {/* Conversas Recentes */}
+        {/* Grid Principal */}
         <div className="dashboard-grid">
-
-          <section className="box">
-            <div className="box-header">
-              <div className="box-header-left">
-                <img src={balaoLogo} alt="ícone" />
-                <h2>Minhas Conversas Recentes</h2>
+          {/* Coluna Esquerda */}
+          <div className="left-column">
+            {/* Meus guias de entrevistas */}
+            <section className="box">
+              <div className="box-header">
+                <div className="box-header-left">
+                  <img src={balaoLogo} alt="ícone" />
+                  <h2>Meus Guias de Entrevista</h2>
+                </div>
+                <button className="see-more" onClick={goToHistoricoGuias}>
+                  Ver todos
+                </button>
               </div>
 
-              <button className="see-more">Ver todas</button>
-            </div>
+              <div className="guide-item">
+                <h3>Desenvolvedor Full Stack</h3>
+                <p>Análise completa com trilha de estudos focada em React e Node.js</p>
+                <span className="time-info">2 dias atrás</span>
+              </div>
 
-            <div className="conversation-item">
-              <h3>Desenvolvedor Full Stack</h3>
-              <p>Análise completa com trilha focada em React e Node.js</p>
-              <span className="time-info">2 semanas atrás</span>
-            </div>
+              <div className="guide-item">
+                <h3>Analista de Dados</h3>
+                <p>Recomendações para certificações em Python e SQL</p>
+                <span className="time-info">1 semana atrás</span>
+              </div>
 
-            <div className="conversation-item">
-              <h3>Analista de Dados</h3>
-              <p>Recomendações para certificações em Python e SQL</p>
-              <span className="time-info">3 semanas atrás</span>
-            </div>
+              <div className="guide-item">
+                <h3>UX/UI Designer</h3>
+                <p>Sugestões de portfólio e cursos de design thinking</p>
+                <span className="time-info">2 semanas atrás</span>
+              </div>
+            </section>
 
-            <div className="conversation-item">
-              <h3>UX/UI Designer</h3>
-              <p>Sugestões de portfólio e cursos de design thinking</p>
-              <span className="time-info">2 meses atrás</span>
-            </div>
+            {/* Minhas Trilhas de Estudo */}
+            <section className="box full-width">
+              <div className="box-header">
+                <div className="box-header-left">
+                  <h2>Minhas Trilhas de Estudo</h2>
+                </div>
+                <button className="see-more" onClick={goToHistoricoTrilhas}>
+                  Ver todas
+                </button>
+              </div>
 
-          </section>
+              <div className="track">
+                <div className="track-header">
+                  <h3>Desenvolvedor Full Stack</h3>
+                  <span className="track-status">Em andamento</span>
+                </div>
+              </div>
 
+              <div className="track">
+                <div className="track-header">
+                  <h3>Análise de Dados</h3>
+                  <span className="track-status green">Concluída</span>
+                </div>
+              </div>
+            </section>
+          </div>
+
+          {/* Coluna Direita */}
+          <div className="right-column">
+            {/* Ações Rápidas */}
+            <section className="box">
+              <div className="box-header">
+                <h2>Ações Rápidas</h2>
+              </div>
+              <div className="actions-box">
+                <button className="action-button blue-btn" onClick={() => navigate('/upload')}>
+                  Análise de Currículo
+                </button>
+                <button className="action-button gray-btn" onClick={() => navigate('/interview-guide')}>
+                  Guia de entrevista
+                </button>
+                <button className="action-button purple-btn" onClick={() => navigate('/vocational-form')}>
+                  Criar trilha de estudo
+                </button>
+              </div>
+            </section>
+          </div>
         </div>
-
       </main>
     </div>
   );

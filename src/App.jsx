@@ -11,6 +11,14 @@ import DevelopmentTrailPage from "./pages/DevelopmentTrailPage";
 import ConfigPage from "./pages/ConfigPage";
 import ExcludePage from "./pages/ExcludePage";
 import AskPage from "./pages/AskPage";
+import StudyTrailHistoryPage from "./pages/StudyTrailHistoryPage";
+import ResumeAnalysisHistoryPage from './pages/ResumeAnalysisHistoryPage';
+import InterviewGuidePage from './pages/InterviewGuidePage';
+import InterviewGuideResultPage from './pages/InterviewGuideResultPage';
+import VocationalFormPage from './pages/VocationalFormPage';
+import VocationalTrailResultPage from './pages/VocationalTrailResultPage';
+import InterviewGuideHistoryPage from './pages/InterviewGuideHistoryPage';
+import ResumeAnalysisPage from './pages/ResumeAnalysisPage';
 
 function App() {
   return (
@@ -29,6 +37,14 @@ function App() {
           <li><Link to="/exclude">exclude</Link></li>
           <li><Link to="/asks">asks</Link></li>
           
+          <li><Link to="/analise-curriculo/1">Resultado da Análise</Link></li>
+          <li><Link to="/historico-trilhas">Histórico Trilhas</Link></li>
+          <li><Link to="/historico-curriculos">Histórico de Análise de Currículos</Link></li>
+          <li><Link to="/historico-guias">Histórico de Guias de Entrevista</Link></li>
+          <li><Link to="/interview-guide">Guia de Entrevista</Link></li>
+          <li><Link to="/interview-guide-result">Resposta da Guia de Entrevista</Link></li>
+          <li><Link to="/vocational-form">Criar Trilha de Estudo</Link></li>
+          <li><Link to="/vocational-form-response">Resposta da Trilha de Estudo</Link></li>
         </ul>
       </nav>
 
@@ -44,6 +60,15 @@ function App() {
         <Route path="/config" element={<ConfigPage />} />
         <Route path="/exclude" element={<ExcludePage />} />
         <Route path="/asks" element={<AskPage />} />
+        <Route path="/historico-trilhas" element={<StudyTrailHistoryPage />} />
+        <Route path="/historico-curriculos" element={<ResumeAnalysisHistoryPage />} />
+        <Route path="/historico-guias" element={<InterviewGuideHistoryPage />} />
+        <Route path="/analise-curriculo" element={<ResumeAnalysisPage />} />
+        <Route path="/analise-curriculo/:id" element={<ResumeAnalysisPage />} />
+        <Route path="/interview-guide" element={<InterviewGuidePage />} />
+        <Route path="/interview-guide-result" element={<InterviewGuideResultPage />} />
+        <Route path="/vocational-form" element={<VocationalFormPage />} />
+        <Route path="/vocational-form-response" element={<VocationalTrailResultPage />} />
       </Routes>
     </div>
   );

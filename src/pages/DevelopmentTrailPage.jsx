@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-
-import logo from '../assets/div.svg';
+import Header from '../components/Header'; // Importando o Header component
 import { getDevelopmentTrailById } from '../services/authService';
-import UserProfile from '../components/UserProfile';
-import '../components/UserProfile.css';
 import './DevelopmentTrailPage.css';
 
 const DevelopmentTrailPage = () => {
@@ -14,6 +11,13 @@ const DevelopmentTrailPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const user = JSON.parse(localStorage.getItem('user') || '{"name": "Usuário"}');
+
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+  };
 
   useEffect(() => {
     const fetchTrail = async () => {
@@ -63,13 +67,6 @@ const DevelopmentTrailPage = () => {
       setLoading(false);
     }
   }, [id]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('refresh_token');
-    localStorage.removeItem('user');
-    window.location.href = '/login';
-  };
 
   const handleNewForm = () => {
     navigate('/upload');
@@ -134,14 +131,7 @@ const DevelopmentTrailPage = () => {
   if (loading) {
     return (
       <div className="trail-container">
-        <header className="trail-header">
-          <div className="header-left">
-            <div className="logo-box-header">
-              <img src={logo} alt="Logo" />
-            </div>
-            <span className="app-name">CareerPathAI</span>
-          </div>
-        </header>
+        <Header user={user} onLogout={handleLogout} />
         <div className="loading-message">Carregando trilha de desenvolvimento...</div>
       </div>
     );
@@ -150,19 +140,7 @@ const DevelopmentTrailPage = () => {
   if (error || !trail) {
     return (
       <div className="trail-container">
-        <header className="trail-header">
-          <div className="header-left">
-            <div className="logo-box-header">
-              <img src={logo} alt="Logo" />
-            </div>
-            <span className="app-name">CareerPathAI</span>
-          </div>
-          <nav className="header-nav">
-            <button className="nav-link" onClick={() => navigate('/home')}>Histórico</button>
-            <button className="nav-link">Configurações</button>
-            {user && user.name && <UserProfile user={user} onLogout={handleLogout} />}
-          </nav>
-        </header>
+        <Header user={user} onLogout={handleLogout} />
         <div className="trail-content-wrapper">
           <main className="trail-main">
             <div className="trail-card">
@@ -190,120 +168,107 @@ const DevelopmentTrailPage = () => {
 
   return (
     <div className="trail-container">
-      {/* Header */}
-      <header className="trail-header">
-        <div className="header-left">
-          <div className="logo-box-header">
-            <img src={logo} alt="Logo" />
-          </div>
-          <span className="app-name">CareerPathAI</span>
-        </div>
-        <nav className="header-nav">
-          <button className="nav-link" onClick={() => navigate('/home')}>Histórico</button>
-          <button className="nav-link">Configurações</button>
-          <UserProfile user={user} onLogout={handleLogout} />
-        </nav>
-      </header>
+      {/* Header component */}
+      <Header user={user} onLogout={handleLogout} />
 
       {/* Main Content */}
       <main className="trail-main">
-          <div className="trail-card">
-            <div className="trail-card-header">
-              <h1 className="trail-title">Plano de Desenvolvimento Personalizado</h1>
-              {developmentData.user_profile_summary && (
-                <p className="trail-subtitle">
-                  {developmentData.user_profile_summary.current_profile || 
-                   'Trilha de estudos personalizada para acelerar sua carreira'}
-                </p>
-              )}
-            </div>
-
-            <div className="weeks-container">
-              {weeks.map((week, index) => (
-                <div key={index} className="week-card">
-                  <div className="week-header">
-                    <div className="week-icon">📅</div>
-                    <h2 className="week-title">Semana {week.weekNumber}</h2>
-                  </div>
-                  
-                  {week.focus && (
-                    <p className="week-focus">{week.focus}</p>
-                  )}
-
-                  {week.topics && week.topics.length > 0 && (
-                    <div className="week-content">
-                      <h3 className="content-title">Tópicos:</h3>
-                      <ul className="content-list">
-                        {week.topics.map((topic, topicIndex) => {
-                          // Se o tópico tem " - " ou ": ", separa título e descrição
-                          const parts = topic.split(/ - |: /);
-                          const title = parts[0];
-                          const description = parts.length > 1 ? parts.slice(1).join(' - ') : '';
-                          return (
-                            <li key={topicIndex} className="topic-item">
-                              <span className="bullet blue"></span>
-                              <span className="item-text">
-                                <strong>{title}</strong>
-                                {description && ` - ${description}`}
-                              </span>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  )}
-
-                  {week.projects && week.projects.length > 0 && (
-                    <div className="week-content">
-                      <h3 className="content-title">Projetos Práticos:</h3>
-                      <ul className="content-list">
-                        {week.projects.map((project, projectIndex) => {
-                          const isFinalProject = project.toLowerCase().includes('final') || project.toLowerCase().includes('completa');
-                          return (
-                            <li key={projectIndex} className="project-item">
-                              <span className={`bullet ${isFinalProject ? 'orange' : 'green'}`}></span>
-                              <span className="item-text">{project}</span>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
-                  )}
-
-                  {week.learningOutcomes && week.learningOutcomes.length > 0 && (
-                    <div className="week-content">
-                      <h3 className="content-title">Resultados Esperados:</h3>
-                      <ul className="content-list">
-                        {week.learningOutcomes.map((outcome, outcomeIndex) => (
-                          <li key={outcomeIndex} className="outcome-item">
-                            <span className="bullet blue"></span>
-                            <span className="item-text">{outcome}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <div className="trail-actions">
-              <button className="export-btn" onClick={handleExportPDF}>
-                📄 Exportar Plano em PDF
-              </button>
-              <button className="new-form-btn" onClick={handleNewForm}>
-                + Novo Formulário
-              </button>
-            </div>
-
-            <p className="trail-footer-text">
-              Baixe seu plano personalizado para acompanhar offline
-            </p>
+        <div className="trail-card">
+          <div className="trail-card-header">
+            <h1 className="trail-title">Plano de Desenvolvimento Personalizado</h1>
+            {developmentData.user_profile_summary && (
+              <p className="trail-subtitle">
+                {developmentData.user_profile_summary.current_profile || 
+                 'Trilha de estudos personalizada para acelerar sua carreira'}
+              </p>
+            )}
           </div>
-        </main>
+
+          <div className="weeks-container">
+            {weeks.map((week, index) => (
+              <div key={index} className="week-card">
+                <div className="week-header">
+                  <div className="week-icon">📅</div>
+                  <h2 className="week-title">Semana {week.weekNumber}</h2>
+                </div>
+                
+                {week.focus && (
+                  <p className="week-focus">{week.focus}</p>
+                )}
+
+                {week.topics && week.topics.length > 0 && (
+                  <div className="week-content">
+                    <h3 className="content-title">Tópicos:</h3>
+                    <ul className="content-list">
+                      {week.topics.map((topic, topicIndex) => {
+                        // Se o tópico tem " - " ou ": ", separa título e descrição
+                        const parts = topic.split(/ - |: /);
+                        const title = parts[0];
+                        const description = parts.length > 1 ? parts.slice(1).join(' - ') : '';
+                        return (
+                          <li key={topicIndex} className="topic-item">
+                            <span className="bullet blue"></span>
+                            <span className="item-text">
+                              <strong>{title}</strong>
+                              {description && ` - ${description}`}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+
+                {week.projects && week.projects.length > 0 && (
+                  <div className="week-content">
+                    <h3 className="content-title">Projetos Práticos:</h3>
+                    <ul className="content-list">
+                      {week.projects.map((project, projectIndex) => {
+                        const isFinalProject = project.toLowerCase().includes('final') || project.toLowerCase().includes('completa');
+                        return (
+                          <li key={projectIndex} className="project-item">
+                            <span className={`bullet ${isFinalProject ? 'orange' : 'green'}`}></span>
+                            <span className="item-text">{project}</span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </div>
+                )}
+
+                {week.learningOutcomes && week.learningOutcomes.length > 0 && (
+                  <div className="week-content">
+                    <h3 className="content-title">Resultados Esperados:</h3>
+                    <ul className="content-list">
+                      {week.learningOutcomes.map((outcome, outcomeIndex) => (
+                        <li key={outcomeIndex} className="outcome-item">
+                          <span className="bullet blue"></span>
+                          <span className="item-text">{outcome}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          <div className="trail-actions">
+            <button className="export-btn" onClick={handleExportPDF}>
+              📄 Exportar Plano em PDF
+            </button>
+            <button className="new-form-btn" onClick={handleNewForm}>
+              + Novo Formulário
+            </button>
+          </div>
+
+          <p className="trail-footer-text">
+            Baixe seu plano personalizado para acompanhar offline
+          </p>
+        </div>
+      </main>
     </div>
   );
 };
 
 export default DevelopmentTrailPage;
-

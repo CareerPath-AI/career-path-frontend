@@ -5,7 +5,7 @@ import logo from '../assets/div.svg';
 import emailLogo from '../assets/Vector.svg';
 import passwordLogo from '../assets/pass.svg';
 import { loginUser } from '../services/authService'; 
-import './LoginPage.css';
+// import './LoginPage.css';
 
 
 

@@ -1,8 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import logo from '../assets/div.svg';
-import { uploadResume } from '../services/authService';
+import Header from '../components/Header'; // Importando o Header component
 import './UploadResumePage.css';
 
 const UploadResumePage = () => {
@@ -13,7 +11,15 @@ const UploadResumePage = () => {
   const [error, setError] = useState('');
   const [isUploading, setIsUploading] = useState(false);
 
+  const user = JSON.parse(localStorage.getItem('user'));
   const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB em bytes
+
+  const handleLogout = () => {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    localStorage.removeItem('user');
+    window.location.href = '/login';
+  };
 
   const validateFile = (file) => {
     if (file.type !== 'application/pdf') {
@@ -76,10 +82,13 @@ const UploadResumePage = () => {
     setError('');
 
     try {
-      const data = await uploadResume(selectedFile);
-      alert('Currículo enviado com sucesso!');
-      // Redirecionar para página de análise ou dashboard
-      // navigate('/dashboard');
+      // Simulando o upload (em produção, use uploadResume(selectedFile))
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // REDIRECIONA PARA A PÁGINA DE ANÁLISE APÓS O UPLOAD
+      // Gerar um ID aleatório ou usar o ID retornado pelo backend
+      const analysisId = Math.floor(Math.random() * 1000) + 1;
+      navigate(`/analise-curriculo/${analysisId}`);
       
     } catch (err) {
       console.error(err);
@@ -98,24 +107,8 @@ const UploadResumePage = () => {
 
   return (
     <div className="upload-container">
-      {/* Header/Navigation */}
-      <header className="upload-header">
-        <div className="header-left">
-          <div className="logo-box-header">
-            <img src={logo} alt="Logo" />
-          </div>
-          <span className="app-name">CareerPathAI</span>
-        </div>
-        <nav className="header-nav">
-          <button className="nav-link">Histórico</button>
-          <button className="nav-link">Configurações</button>
-          <div className="user-profile">
-            <span className="user-name">Mario Silva</span>
-            <div className="user-avatar">MS</div>
-            <span className="dropdown-arrow">▼</span>
-          </div>
-        </nav>
-      </header>
+      {/* Header component */}
+      <Header user={user} onLogout={handleLogout} />
 
       {/* Main Content */}
       <main className="upload-main">
@@ -123,7 +116,7 @@ const UploadResumePage = () => {
           <div className="upload-header-section">
             <h1 className="upload-title">Análise Inteligente de Currículo</h1>
             <p className="upload-description">
-              Nossa IA avalia seu currículo e cria uma trilha de estudos personalizada para acelerar sua carreira
+              Envie seu currículo em PDF e nossa IA criará uma análise detalhada com sugestões de melhoria
             </p>
           </div>
 
@@ -179,7 +172,7 @@ const UploadResumePage = () => {
               className="analyze-button"
               disabled={!selectedFile || isUploading}
             >
-              {isUploading ? 'Enviando...' : '✓ Analisar Currículo'}
+              {isUploading ? 'Analisando...' : '✓ Analisar Currículo'}
             </button>
           </form>
         </div>
@@ -189,4 +182,3 @@ const UploadResumePage = () => {
 };
 
 export default UploadResumePage;
-
