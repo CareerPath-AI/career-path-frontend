@@ -10,7 +10,7 @@ import HomePage from "./pages/HomePage";
 import DevelopmentTrailPage from "./pages/DevelopmentTrailPage";
 import ConfigPage from "./pages/ConfigPage";
 import ExcludePage from "./pages/ExcludePage";
-import AskPage from "./pages/AskPage";
+// import AskPage from "./pages/AskPage";
 import StudyTrailHistoryPage from "./pages/StudyTrailHistoryPage";
 import ResumeAnalysisHistoryPage from './pages/ResumeAnalysisHistoryPage';
 import InterviewGuidePage from './pages/InterviewGuidePage';
@@ -35,7 +35,7 @@ function App() {
           <li><Link to="/trail/1">Trilha</Link></li>
           <li><Link to="/config">config</Link></li>
           <li><Link to="/exclude">exclude</Link></li>
-          <li><Link to="/asks">asks</Link></li>
+          {/* <li><Link to="/asks">asks</Link></li> */}
           
           <li><Link to="/analise-curriculo/1">Resultado da Análise</Link></li>
           <li><Link to="/historico-trilhas">Histórico Trilhas</Link></li>
@@ -59,7 +59,7 @@ function App() {
         <Route path="/trail/:id" element={<DevelopmentTrailPage />} />
         <Route path="/config" element={<ConfigPage />} />
         <Route path="/exclude" element={<ExcludePage />} />
-        <Route path="/asks" element={<AskPage />} />
+        {/* <Route path="/asks" element={<AskPage />} /> */}
         <Route path="/historico-trilhas" element={<StudyTrailHistoryPage />} />
         <Route path="/historico-curriculos" element={<ResumeAnalysisHistoryPage />} />
         <Route path="/historico-guias" element={<InterviewGuideHistoryPage />} />
