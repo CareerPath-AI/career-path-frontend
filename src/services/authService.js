@@ -169,3 +169,173 @@ export async function getDevelopmentTrailById(trailId) {
   return await response.json();
 }
 
+export async function getTotalDevelopmentTrail() {
+  const token = localStorage.getItem('access_token');
+
+  if (!token) {
+    throw new Error('Token de autenticação não encontrado');
+  }
+
+  const response = await fetch(`${API_URL}/api/v1/development-trail/?skip=0&limit=1`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    let errorMessage = 'Erro ao buscar total de trilhas';
+
+    if (response.status === 404) {
+      errorMessage = 'Nenhuma trilha encontrada';
+    } else if (response.status === 401) {
+      errorMessage = 'Não autorizado';
+    } else if (response.status === 403) {
+      errorMessage = 'Acesso negado';
+    }
+
+    const error = new Error(errorMessage);
+    error.status = response.status;
+    throw error;
+  }
+
+  const data = await response.json();
+
+  return data.total_count; // <<< retorna APENAS isso
+}
+
+export async function getTotalAnalyzeResume() {
+  const token = localStorage.getItem('access_token');
+
+  if (!token) {
+    throw new Error('Token de autenticação não encontrado');
+  }
+
+  const response = await fetch(`${API_URL}/api/v1/analyze-resume/?skip=0&limit=1`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    let errorMessage = 'Erro ao buscar total de currículos';
+
+    if (response.status === 404) {
+      errorMessage = 'Nenhum currículo encontrado';
+    } else if (response.status === 401) {
+      errorMessage = 'Não autorizado';
+    } else if (response.status === 403) {
+      errorMessage = 'Acesso negado';
+    }
+
+    const error = new Error(errorMessage);
+    error.status = response.status;
+    throw error;
+  }
+
+  const data = await response.json();
+
+  return data.total_count; // <<< retorna APENAS isso
+}
+
+export async function getTotalInterviewGuide() {
+  const token = localStorage.getItem('access_token');
+
+  if (!token) {
+    throw new Error('Token de autenticação não encontrado');
+  }
+
+  const response = await fetch(`${API_URL}/api/v1/interview-guide/?skip=0&limit=1`, {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    let errorMessage = 'Erro ao buscar total de conversas';
+
+    if (response.status === 404) {
+      errorMessage = 'Nenhuma conversa encontrada';
+    } else if (response.status === 401) {
+      errorMessage = 'Não autorizado';
+    } else if (response.status === 403) {
+      errorMessage = 'Acesso negado';
+    }
+
+    const error = new Error(errorMessage);
+    error.status = response.status;
+    throw error;
+  }
+
+  const data = await response.json();
+
+  return data.total_count; // <<< retorna APENAS isso
+}
+
+export async function analyzeResume(file) {
+  const token = localStorage.getItem('access_token');
+
+  if (!token) {
+    throw new Error('Token de autenticação não encontrado');
+  }
+
+  if (!file) {
+    throw new Error('Nenhum arquivo enviado');
+  }
+
+  const formData = new FormData();
+  formData.append('file', file);  // nome esperado pelo backend (alterar se necessário)
+
+  const response = await fetch(`${API_URL}/api/v1/analyze-resume/`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      // NÃO adicionar Content-Type aqui, o FormData define sozinho
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Erro ao enviar currículo para análise: ${errorText}`);
+  }
+
+  return await response.json(); // Deve retornar o ID da análise ou dados da análise
+}
+
+export async function analyzeInterviewGuide(job_description, file) {
+  const token = localStorage.getItem('access_token');
+
+  if (!token) {
+    throw new Error('Token de autenticação não encontrado');
+  }
+
+  if (!file) {
+    throw new Error('Nenhum arquivo enviado');
+  }
+
+  const formData = new FormData();
+  formData.append('job_description', job_description);  // nome esperado pelo backend (alterar se necessário)
+  formData.append('file', file);  // nome esperado pelo backend (alterar se necessário)
+
+  const response = await fetch(`${API_URL}/api/v1/interview-guide/`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      // NÃO adicionar Content-Type aqui, o FormData define sozinho
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Erro ao enviar currículo para análise: ${errorText}`);
+  }
+
+  return await response.json(); // Deve retornar o ID da análise ou dados da análise
+}

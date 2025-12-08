@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header'; // Importando o Header component
 import './UploadResumePage.css';
+import { analyzeResume } from "../services/authService"; 
+
 
 const UploadResumePage = () => {
   const navigate = useNavigate();
@@ -72,27 +74,25 @@ const UploadResumePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!selectedFile) {
-      setError('Por favor, selecione um arquivo PDF.');
+      setError("Por favor, selecione um arquivo PDF.");
       return;
     }
 
     setIsUploading(true);
-    setError('');
+    setError("");
 
     try {
-      // Simulando o upload (em produção, use uploadResume(selectedFile))
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // REDIRECIONA PARA A PÁGINA DE ANÁLISE APÓS O UPLOAD
-      // Gerar um ID aleatório ou usar o ID retornado pelo backend
-      const analysisId = Math.floor(Math.random() * 1000) + 1;
-      navigate(`/analise-curriculo/${analysisId}`);
-      
+      const result = await analyzeResume(selectedFile);
+
+      console.log("Resultado da análise do currículo:", result);
+      // EXEMPLO: backend retorna { id: 123 }
+      // navigate(`/analise-curriculo/${result.id}`);
+
     } catch (err) {
       console.error(err);
-      setError('Erro ao fazer upload do currículo. Tente novamente.');
+      setError("Erro ao fazer upload do currículo. Tente novamente.");
     } finally {
       setIsUploading(false);
     }

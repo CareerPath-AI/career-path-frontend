@@ -6,10 +6,56 @@ import pdfLogo from '../assets/pdf.svg';
 import trilhaLogo from '../assets/trilha.svg';
 import balaoLogo from '../assets/balaoDeConversa.svg';
 import Header from '../components/Header'; // Usando o Header component
+import { getTotalDevelopmentTrail } from '../services/authService';
+import { getTotalInterviewGuide } from '../services/authService';
+import { getTotalAnalyzeResume } from '../services/authService';
+
+
 
 const HomePage = () => {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user'));
+  const [totalTrails, setTotalTrails] = React.useState(0);
+  const [totalGuides, setTotalGuides] = React.useState(0);
+  const [totalResumes, setTotalResumes] = React.useState(0);
+
+  React.useEffect(() => {
+    const fetchTotalTrails = async () => {
+      try {
+        const total = await getTotalDevelopmentTrail();
+        setTotalTrails(total);
+      } catch (error) {
+        console.error('Erro ao buscar total de trilhas:', error);
+      }
+    };
+
+    fetchTotalTrails();
+  }, []);
+  React.useEffect(() => {
+    const fetchTotalGuides = async () => {
+      try {
+        const total = await getTotalInterviewGuide();
+        setTotalGuides(total);
+      } catch (error) {
+        console.error('Erro ao buscar total de guias:', error);
+      }
+    };
+
+    fetchTotalGuides();
+  }, []);
+  React.useEffect(() => {
+    const fetchTotalResumes = async () => {
+      try {
+        const total = await getTotalAnalyzeResume();
+        setTotalResumes(total);
+      } catch (error) {
+        console.error('Erro ao buscar total de currículos:', error);
+      }
+    };
+
+    fetchTotalResumes();
+  }, []); 
+  
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
@@ -53,22 +99,22 @@ const HomePage = () => {
           <div className="top-card">
             <img src={conversasLogo} alt="ícone" className="card-icon blue" />
             <p className="card-title">Conversas com IA</p>
-            <p className="card-number">12</p>
-            <span className="card-subtext">+3 esta semana</span>
+            <p className="card-number">{totalGuides}</p>
+            {/* <span className="card-subtext">+3 esta semana</span> */}
           </div>
 
           <div className="top-card">
             <img src={pdfLogo} alt="ícone" className="card-icon" />
             <p className="card-title">Currículos Analisados</p>
-            <p className="card-number">8</p>
-            <span className="card-subtext">+2 este mês</span>
+            <p className="card-number">{totalResumes}</p>
+            {/* <span className="card-subtext">+2 este mês</span> */}
           </div>
 
           <div className="top-card">
             <img src={trilhaLogo} alt="ícone" className="card-icon" />
             <p className="card-title">Trilhas Criadas</p>
-            <p className="card-number">5</p>
-            <span className="card-subtext">Em andamento</span>
+            <p className="card-number">{totalTrails}</p>
+            {/* <span className="card-subtext">Em andamento</span> */}
           </div>
         </section>
 

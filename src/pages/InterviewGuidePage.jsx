@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header'; // Importando o Header component
 import './InterviewGuidePage.css';
+import { analyzeInterviewGuide } from '../services/authService';
+
 
 const InterviewGuidePage = () => {
   const navigate = useNavigate();
@@ -89,26 +91,28 @@ const InterviewGuidePage = () => {
     setIsGenerating(true);
     setError('');
 
-    // Aqui você faria a chamada à API para gerar o guia de entrevista
-    // Por enquanto, vamos simular uma requisição
-    setTimeout(() => {
+    try {
+      // Chamada REAL para seu backend
+      const result = await analyzeInterviewGuide(jobDescription, selectedFile);
+
+      // Esperado: result deve vir algo como:
+      // { id: 123, job_title: "...", company: "...", suggestions: [...] }
+      console.log('Guia de entrevista gerado com sucesso:', result);
+
+      // navigate('/interview-guide-result', {
+      //   state: {
+      //     jobTitle: result.job_title,
+      //     company: result.company,
+      //     suggestions: result.suggestions,
+      //   }
+      // });
+
+    } catch (err) {
+      console.error(err);
+      setError('Erro ao gerar o guia de entrevista. Tente novamente.');
+    } finally {
       setIsGenerating(false);
-      // Navegar para a página de resultado, passando os dados necessários
-      navigate('/interview-guide-result', {
-        state: {
-          jobTitle: 'Desenvolvedor Frontend',
-          company: 'TechCorp Solutions',
-          suggestions: [
-            'Revise suas habilidades técnicas em React',
-            'Estude conceitos de CSS avançado e responsividade',
-            'Prepare exemplos de projetos colaborativos',
-            'Demonstre conhecimento em otimização de performance',
-            'Pesquise sobre a cultura da empresa',
-            'Prepare perguntas inteligentes sobre a posição'
-          ]
-        }
-      });
-    }, 2000);
+    }
   };
 
   const handleRemoveFile = () => {
