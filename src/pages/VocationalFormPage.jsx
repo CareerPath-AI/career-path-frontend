@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assets/div.svg';
 import UserProfile from '../components/UserProfile';
+import { createDevelopmentTrail } from '../services/authService';
 import './VocationalFormPage.css';
 
 const VocationalFormPage = () => {
@@ -151,35 +152,36 @@ const VocationalFormPage = () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  
-  // Preparar os dados para enviar ao backend
-  const submissionData = {
-    ...formData,
-    skills: formData.skills.split(',').map(skill => skill.trim()).filter(skill => skill),
-    interested_technologies: formData.interested_technologies.split(',').map(tech => tech.trim()).filter(tech => tech),
-    experience_in_years: parseInt(formData.experience_in_years) || 0,
-    age: parseInt(formData.age) || 0
-  };
-
-  console.log('Dados enviados:', submissionData);
-
-  try {
-    // Em produção, você faria a chamada à API:
-    // const response = await generateStudyPath(submissionData);
-    // const trailResult = response.data;
+    e.preventDefault();
     
-    // Por enquanto, redireciona com os dados mockados
-    navigate('/vocational-form-response', { 
-      state: { 
-        formData: submissionData,
-        // Em produção: trailData: response.data
-      } 
-    });
-    
-  } catch (error) {
-    console.error('Erro ao gerar trilha:', error);
-    alert('Erro ao gerar trilha de estudos. Tente novamente.');
+    // Preparar os dados para enviar ao backend
+    const submissionData = {
+      ...formData,
+      skills: formData.skills.split(',').map(skill => skill.trim()).filter(skill => skill),
+      interested_technologies: formData.interested_technologies.split(',').map(tech => tech.trim()).filter(tech => tech),
+      experience_in_years: parseInt(formData.experience_in_years) || 0,
+      age: parseInt(formData.age) || 0
+    };
+
+    try {
+      const response = await createDevelopmentTrail(submissionData);
+      
+      // Redireciona para a trilha criada
+      navigate(`/trail/${response.id}`);
+      
+    } catch (error) {
+      console.error('Erro ao gerar trilha:', error);
+      
+      // Mensagem de erro mais específica
+      let errorMessage = 'Erro ao gerar trilha de estudos. Tente novamente.';
+      
+      if (error.message && error.message.includes('429') || error.message.includes('quota') || error.message.includes('limite')) {
+        errorMessage = 'Limite de uso da API do Gemini excedido. Por favor, aguarde alguns minutos e tente novamente. O plano gratuito tem limites reduzidos.';
+      } else if (error.message && error.message.includes('authentication')) {
+        errorMessage = 'Erro de autenticação. Verifique a configuração da API.';
+      }
+      
+      alert(errorMessage);
     }
   };
 

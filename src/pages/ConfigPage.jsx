@@ -3,11 +3,11 @@ import { useNavigate } from "react-router-dom";
 import key from '../assets/key.svg';
 import card from '../assets/card.svg';
 import back from '../assets/back.svg';
-import logout from '../assets/logout.svg';
+import logoutIcon from '../assets/logout.svg';
 import exclude from '../assets/exclude.svg';
 import "./ConfigPage.css";
 
-import { emailResetPassword, EditUserName } from '../services/authService'; 
+import { emailResetPassword, EditUserName, excludeUser, logout } from '../services/authService'; 
 
 const ConfigPage = () => {
   const navigate = useNavigate();
@@ -46,9 +46,15 @@ const ConfigPage = () => {
         throw new Error("Erro ao atualizar nome");
       }
 
+      // O backend retorna UserUpdateResponse com email, name, updated_at
       // atualizar o user no localStorage
       const updatedUser = JSON.parse(localStorage.getItem("user"));
-      updatedUser.name = name;
+      if (response.name) {
+        updatedUser.name = response.name;
+      }
+      if (response.email) {
+        updatedUser.email = response.email;
+      }
       localStorage.setItem("user", JSON.stringify(updatedUser));
 
       // setSuccess("Nome atualizado com sucesso!");
@@ -56,18 +62,38 @@ const ConfigPage = () => {
 
     } catch (err) {
       console.error(err);
-      setErrorName("Erro ao atualizar nome.");
+      const errorMessage = err.message || "Erro ao atualizar nome.";
+      setErrorName(errorMessage);
     }
   };
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (err) {
+      console.error('Erro ao fazer logout:', err);
+    } finally {
+      localStorage.clear();
+      navigate("/login");
+    }
   };
 
-  const handleDelete = () => {
-    const confirmDelete = window.confirm("Tem certeza que deseja excluir sua conta?");
-    if (confirmDelete) window.location.href = "/exclude";
+  const handleDelete = async () => {
+    const password = window.prompt("Digite sua senha para confirmar a exclusão:");
+    if (!password) return;
+
+    const confirmDelete = window.confirm("Tem certeza que deseja excluir sua conta? Esta ação é permanente!");
+    if (!confirmDelete) return;
+
+    try {
+      await excludeUser(password);
+      alert('Conta excluída com sucesso');
+      localStorage.clear();
+      navigate("/login");
+    } catch (err) {
+      console.error('Erro ao excluir conta:', err);
+      alert('Erro ao excluir conta. Verifique se a senha está correta.');
+    }
   };
 
   const handleUpdatePassword = async (e) => {

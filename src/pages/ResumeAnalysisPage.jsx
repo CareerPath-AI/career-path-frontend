@@ -1,71 +1,62 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Header from '../components/Header'; // Importando o Header component
+import Header from '../components/Header';
+import { getResumeAnalysisById } from '../services/authService';
 import './ResumeAnalysisPage.css';
 
 const ResumeAnalysisPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   
-  // Recuperar usuário do localStorage
   const user = JSON.parse(localStorage.getItem('user') || '{"name": "Usuário"}');
+  const [analysis, setAnalysis] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // Dados mockados para análise de currículo
-  const mockAnalysis = {
-    id: id || '1',
-    fileName: 'Currículo_Maria_Silva_2024.pdf',
-    analysisDate: '21 de Nov. 2025',
-    suggestions: [
-      {
-        title: 'Adicione um resumo profissional impactante',
-        description: 'Inclua um breve parágrafo no início do currículo destacando suas principais competências, experiências e objetivos de carreira. Isso ajuda recrutadores a entenderem rapidamente seu perfil.'
-      },
-      {
-        title: 'Quantifique suas conquistas',
-        description: 'Substitua descrições genéricas por resultados mensuráveis. Exemplo: "Aumentei as vendas em 35% em 6 meses" é mais impactante que "Responsável por vendas".'
-      },
-      {
-        title: 'Otimize para sistemas ATS',
-        description: 'Use palavras-chave relevantes da descrição da vaga. Evite formatações complexas, tabelas ou imagens que possam dificultar a leitura por sistemas automatizados.'
-      },
-      {
-        title: 'Revise a seção de habilidades',
-        description: 'Organize suas habilidades em categorias (técnicas, comportamentais, idiomas). Destaque as mais relevantes para a posição desejada e remova competências obsoletas.'
-      },
-      {
-        title: 'Atualize as informações de contato',
-        description: 'Verifique se e-mail, telefone e LinkedIn estão atualizados e profissionais. Considere adicionar um portfólio online ou GitHub se relevante para sua área.'
-      },
-      {
-        title: 'Destaque certificações e cursos recentes',
-        description: 'Adicione uma seção específica para certificações, cursos e treinamentos relevantes. Inclua datas e instituições para demonstrar comprometimento com desenvolvimento profissional.'
-      },
-      {
-        title: 'Simplifique o design visual',
-        description: 'Mantenha um layout limpo e profissional. Use fonte legível (tamanho 10-12pt), margens adequadas e espaçamento consistente. Evite cores chamativas ou fontes decorativas.'
-      },
-      {
-        title: 'Revise a ordem cronológica',
-        description: 'Liste experiências profissionais da mais recente para a mais antiga. Mantenha consistência nas datas e formate-as de maneira uniforme (ex: Jan 2020 - Dez 2022).'
-      },
-      {
-        title: 'Elimine erros gramaticais e ortográficos',
-        description: 'Revise cuidadosamente todo o conteúdo. Peça para alguém revisar ou use ferramentas de correção. Erros podem prejudicar sua credibilidade profissional.'
-      },
-      {
-        title: 'Adapte o currículo para cada vaga',
-        description: 'Personalize seu currículo para cada oportunidade, destacando experiências e habilidades mais relevantes para a posição. Um currículo genérico tem menos chances de sucesso.'
-      },
-      {
-        title: 'Reduza o tamanho do currículo',
-        description: 'Mantenha o currículo entre 1-2 páginas. Remova experiências muito antigas ou irrelevantes. Seja conciso e objetivo, focando no que realmente importa para o recrutador.'
-      },
-      {
-        title: 'Adicione projetos relevantes',
-        description: 'Se aplicável, inclua uma seção de projetos destacando trabalhos significativos, voluntariado ou iniciativas pessoais que demonstrem suas competências e proatividade.'
+  useEffect(() => {
+    const fetchAnalysis = async () => {
+      if (!id) {
+        setError('ID da análise não fornecido');
+        setLoading(false);
+        return;
       }
-    ]
-  };
+
+      try {
+        setLoading(true);
+        const data = await getResumeAnalysisById(id);
+        
+        // Transformar dados da API em formato para exibição
+        const analysisResult = data.analysis_result || {};
+        const suggestions = (analysisResult.career_recommendations || []).map((rec, index) => ({
+          title: rec || `Recomendação ${index + 1}`,
+          description: rec || ''
+        }));
+
+        setAnalysis({
+          id: data.id,
+          fileName: data.original_filename || 'Currículo.pdf',
+          analysisDate: new Date(data.created_at).toLocaleDateString('pt-BR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          }),
+          suggestions: suggestions.length > 0 ? suggestions : [
+            {
+              title: 'Análise concluída',
+              description: analysisResult.market_insights || 'Nenhuma recomendação específica disponível.'
+            }
+          ]
+        });
+      } catch (err) {
+        console.error('Erro ao buscar análise:', err);
+        setError('Erro ao carregar análise de currículo');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalysis();
+  }, [id]);
 
   const handleLogout = () => {
     localStorage.removeItem('access_token');
@@ -82,9 +73,37 @@ const ResumeAnalysisPage = () => {
     navigate('/interview-guide');
   };
 
+  if (loading) {
+    return (
+      <div className="analysis-container">
+        <Header user={user} onLogout={handleLogout} />
+        <main className="analysis-main">
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <p>Carregando análise...</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error || !analysis) {
+    return (
+      <div className="analysis-container">
+        <Header user={user} onLogout={handleLogout} />
+        <main className="analysis-main">
+          <div style={{ textAlign: 'center', padding: '40px' }}>
+            <p style={{ color: 'red' }}>{error || 'Análise não encontrada'}</p>
+            <button onClick={handleBack} style={{ marginTop: '20px' }}>
+              Voltar
+            </button>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="analysis-container">
-      {/* Header component */}
       <Header user={user} onLogout={handleLogout} />
 
       <main className="analysis-main">
@@ -92,10 +111,10 @@ const ResumeAnalysisPage = () => {
           <h1 className="analysis-title">Análise de Currículo</h1>
           <div className="analysis-subtitle">
             <h2 className="analysis-file-name">
-              {mockAnalysis.fileName}
+              {analysis.fileName}
             </h2>
             <span className="analysis-date">
-              Analisado em {mockAnalysis.analysisDate}
+              Analisado em {analysis.analysisDate}
             </span>
           </div>
         </div>
@@ -105,12 +124,12 @@ const ResumeAnalysisPage = () => {
             <div className="analysis-box-header">
               <h2>Sugestões de Melhoria</h2>
               <span className="analysis-count">
-                {mockAnalysis.suggestions.length} recomendações
+                {analysis.suggestions.length} recomendações
               </span>
             </div>
 
             <div className="suggestions-list">
-              {mockAnalysis.suggestions.map((suggestion, index) => (
+              {analysis.suggestions.map((suggestion, index) => (
                 <div 
                   key={index} 
                   className="suggestion-item"

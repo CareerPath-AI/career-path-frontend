@@ -92,24 +92,17 @@ const InterviewGuidePage = () => {
     setError('');
 
     try {
-      // Chamada REAL para seu backend
       const result = await analyzeInterviewGuide(jobDescription, selectedFile);
-
-      // Esperado: result deve vir algo como:
-      // { id: 123, job_title: "...", company: "...", suggestions: [...] }
       console.log('Guia de entrevista gerado com sucesso:', result);
 
-      // navigate('/interview-guide-result', {
-      //   state: {
-      //     jobTitle: result.job_title,
-      //     company: result.company,
-      //     suggestions: result.suggestions,
-      //   }
-      // });
+      // Redireciona para a página de resultado com o ID
+      navigate(`/interview-guide-result/${result.id}`);
 
     } catch (err) {
       console.error(err);
-      setError('Erro ao gerar o guia de entrevista. Tente novamente.');
+      // Usa a mensagem de erro específica do backend se disponível
+      const errorMessage = err.message || 'Erro ao gerar o guia de entrevista. Tente novamente.';
+      setError(errorMessage);
     } finally {
       setIsGenerating(false);
     }

@@ -1,28 +1,91 @@
 // VocationalTrailResultPage.jsx
+// NOTA: Esta página não está mais sendo usada.
+// O formulário redireciona para /trail/:id que usa DevelopmentTrailPage
+// Mantida apenas por compatibilidade, mas recomenda-se remover ou redirecionar para DevelopmentTrailPage
+
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Header from '../components/Header'; // Importando o Header component
+import { useParams, useNavigate } from 'react-router-dom';
+import Header from '../components/Header';
+import { getDevelopmentTrailById } from '../services/authService';
 import './VocationalTrailResultPage.css';
 
 const VocationalTrailResultPage = () => {
-  const location = useLocation();
+  const { id } = useParams();
   const navigate = useNavigate();
   const [trailData, setTrailData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   
   // Recuperar usuário do localStorage
   const user = JSON.parse(localStorage.getItem("user") || '{"name": "Usuário"}');
 
-  // Dados do formulário (vindo da página anterior) - MOCKADO
-  const formData = location.state?.formData || {
-    name: 'Maria Silva',
-    professional_goal: 'Desenvolvedor Full Stack',
-    interested_technologies: 'React, Node.js, TypeScript',
-    skills: 'JavaScript, HTML, CSS',
-    available_time_week: '10-20 horas',
-    current_level: 'Intermediário',
-    goal_timeframe: '6 meses'
-  };
+  useEffect(() => {
+    // Se não houver ID, redireciona para a página de formulário
+    if (!id) {
+      navigate('/vocational-form');
+      return;
+    }
+
+    const fetchTrail = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        
+        const data = await getDevelopmentTrailById(id);
+        
+        // Transforma dados da API no formato esperado pela página
+        const developmentData = data.development_trail || {};
+        const profileSummary = developmentData.user_profile_summary || {};
+        
+        // Formata semanas das fases de desenvolvimento
+        const weeks = (developmentData.development_phases || []).map((phase, index) => ({
+          weekNumber: index + 1,
+          title: phase.phase || `Fase ${index + 1}`,
+          focus: phase.focus || '',
+          topics: phase.topics || [],
+          activities: phase.projects || [],
+          resources: phase.learning_resources || [],
+          estimatedHours: 20 // Valor padrão, pode ser calculado se disponível
+        }));
+
+        setTrailData({
+          id: data.id,
+          title: profileSummary.professional_goal || 'Trilha de Desenvolvimento',
+          created_at: data.created_at,
+          weeks: weeks.length > 0 ? weeks : [],
+          summary: {
+            totalHours: weeks.reduce((sum, week) => sum + (week.estimatedHours || 0), 0),
+            difficulty: profileSummary.current_level || 'Intermediário',
+            timeframe: profileSummary.goal_timeframe || '6 meses',
+            estimatedCompletion: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR'),
+            requiredTechnologies: developmentData.technologies || [],
+            certifications: developmentData.certifications || []
+          },
+          recommendations: developmentData.recommendations || [
+            "Revise os conceitos diariamente",
+            "Pratique com projetos reais",
+            "Participe de comunidades de desenvolvedores"
+          ],
+          formData: {
+            name: profileSummary.name || user.name || '',
+            professional_goal: profileSummary.professional_goal || '',
+            interested_technologies: profileSummary.interested_technologies?.join(', ') || '',
+            skills: profileSummary.skills?.join(', ') || '',
+            available_time_week: profileSummary.available_time_week || '',
+            current_level: profileSummary.current_level || '',
+            goal_timeframe: profileSummary.goal_timeframe || ''
+          }
+        });
+      } catch (err) {
+        console.error('Erro ao buscar trilha:', err);
+        setError('Erro ao carregar trilha. Por favor, tente novamente.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrail();
+  }, [id, navigate, user.name]);
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
@@ -30,154 +93,6 @@ const VocationalTrailResultPage = () => {
     localStorage.removeItem("user");
     window.location.href = "/login";
   };
-
-  // Mock de dados da trilha gerada
-  const mockTrailData = {
-    id: `trail_${Date.now()}`,
-    title: `Trilha de ${formData.professional_goal || 'Desenvolvimento Full Stack'}`,
-    created_at: new Date().toISOString(),
-    weeks: [
-      {
-        weekNumber: 1,
-        title: "Fundamentos do Desenvolvimento Web",
-        focus: "Conceitos básicos e ambientação",
-        topics: [
-          "HTML5 e Semântica",
-          "CSS3 e Flexbox",
-          "JavaScript Básico",
-          "Git e Controle de Versão"
-        ],
-        activities: [
-          "Criar uma página HTML semântica",
-          "Estilizar com CSS Flexbox",
-          "Implementar funcionalidades básicas em JavaScript",
-          "Criar conta no GitHub e primeiro repositório"
-        ],
-        resources: ["MDN Web Docs", "FreeCodeCamp", "GitHub Learning Lab"],
-        estimatedHours: 20
-      },
-      {
-        weekNumber: 2,
-        title: "JavaScript Moderno e React Básico",
-        focus: "ES6+ e introdução ao React",
-        topics: [
-          "ES6+ Features (Arrow functions, Destructuring)",
-          "Async/Await e Promises",
-          "Componentes React",
-          "Props e State"
-        ],
-        activities: [
-          "Converter código para ES6+",
-          "Consumir API com async/await",
-          "Criar componentes React básicos",
-          "Gerenciar estado local"
-        ],
-        resources: ["React Docs", "JavaScript.info", "Codecademy"],
-        estimatedHours: 25
-      },
-      {
-        weekNumber: 3,
-        title: "React Avançado e Hooks",
-        focus: "Estado global e ciclo de vida",
-        topics: [
-          "React Hooks (useState, useEffect, useContext)",
-          "React Router",
-          "Context API",
-          "Custom Hooks"
-        ],
-        activities: [
-          "Criar aplicação com múltiplas rotas",
-          "Implementar Context API para estado global",
-          "Desenvolver custom hooks",
-          "Projeto: To-Do List com persistência"
-        ],
-        resources: ["React Beta Docs", "Epic React", "Frontend Masters"],
-        estimatedHours: 30
-      },
-      {
-        weekNumber: 4,
-        title: "Backend com Node.js e Express",
-        focus: "Fundamentos do servidor e API",
-        topics: [
-          "Node.js Básico",
-          "Express.js",
-          "REST API Design",
-          "Middlewares"
-        ],
-        activities: [
-          "Configurar servidor Express",
-          "Criar endpoints REST",
-          "Implementar middlewares",
-          "Conectar com banco de dados"
-        ],
-        resources: ["Node.js Docs", "Express Guide", "REST API Tutorial"],
-        estimatedHours: 25
-      },
-      {
-        weekNumber: 5,
-        title: "Banco de Dados e Autenticação",
-        focus: "Persistência e segurança",
-        topics: [
-          "MongoDB ou PostgreSQL",
-          "ORM/ODM (Mongoose ou Sequelize)",
-          "JWT Authentication",
-          "Password Hashing"
-        ],
-        activities: [
-          "Modelar banco de dados",
-          "Implementar CRUD completo",
-          "Sistema de autenticação JWT",
-          "Projeto: API com autenticação"
-        ],
-        resources: ["MongoDB University", "JWT.io", "OWASP Guidelines"],
-        estimatedHours: 28
-      },
-      {
-        weekNumber: 6,
-        title: "Projeto Final e Deploy",
-        focus: "Aplicação completa e deploy",
-        topics: [
-          "Full Stack Application",
-          "Testing (Jest, React Testing Library)",
-          "Deploy no Vercel/Railway",
-          "CI/CD Básico"
-        ],
-        activities: [
-          "Desenvolver aplicação completa",
-          "Escrever testes unitários",
-          "Configurar ambiente de produção",
-          "Deploy e monitoramento"
-        ],
-        resources: ["Vercel Docs", "Testing Library", "GitHub Actions"],
-        estimatedHours: 35
-      }
-    ],
-    summary: {
-      totalHours: 163,
-      difficulty: formData.current_level || 'Intermediário',
-      timeframe: formData.goal_timeframe || '6 meses',
-      estimatedCompletion: new Date(Date.now() + 180 * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR'),
-      requiredTechnologies: ["React", "Node.js", "Express", "MongoDB", "Git", "Vercel"],
-      certifications: ["React Developer", "Node.js Services Developer"]
-    },
-    recommendations: [
-      "Revise os conceitos diariamente por 30 minutos",
-      "Participe de comunidades como Discord de desenvolvedores",
-      "Crie um portfólio no GitHub",
-      "Faça networking no LinkedIn",
-      "Considere freelances para ganhar experiência prática"
-    ]
-  };
-
-  useEffect(() => {
-    // Simular delay de carregamento da API
-    const timer = setTimeout(() => {
-      setTrailData(mockTrailData);
-      setLoading(false);
-    }, 1500);
-
-    return () => clearTimeout(timer);
-  }, []);
 
   const handleExportPDF = () => {
     alert('Funcionalidade de exportar PDF em desenvolvimento!');
@@ -188,14 +103,8 @@ const VocationalTrailResultPage = () => {
   };
 
   const handleSaveTrail = () => {
-    // Salvar no localStorage (simulação)
-    const savedTrails = JSON.parse(localStorage.getItem('saved_trails') || '[]');
-    savedTrails.push({
-      ...trailData,
-      saved_at: new Date().toISOString()
-    });
-    localStorage.setItem('saved_trails', JSON.stringify(savedTrails));
-    alert('Trilha salva no seu histórico!');
+    // A trilha já está salva no backend quando criada
+    alert('Esta trilha já está salva no seu histórico!');
     navigate('/historico-trilhas');
   };
 
@@ -207,12 +116,37 @@ const VocationalTrailResultPage = () => {
   if (loading) {
     return (
       <div className="trail-result-container">
-        {/* Header component */}
         <Header user={user} onLogout={handleLogout} />
         <div className="loading-screen">
           <div className="loading-spinner"></div>
-          <h2>Gerando sua trilha personalizada...</h2>
-          <p>Analisando suas respostas para criar o melhor plano de estudos</p>
+          <h2>Carregando sua trilha personalizada...</h2>
+          <p>Aguarde enquanto buscamos os dados da sua trilha</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !trailData) {
+    return (
+      <div className="trail-result-container">
+        <Header user={user} onLogout={handleLogout} />
+        <div className="loading-screen">
+          <h2>Erro ao carregar trilha</h2>
+          <p>{error || 'Trilha não encontrada'}</p>
+          <button 
+            onClick={() => navigate('/vocational-form')}
+            style={{
+              marginTop: '20px',
+              padding: '12px 24px',
+              background: '#2563EB',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            Criar Nova Trilha
+          </button>
         </div>
       </div>
     );
@@ -280,19 +214,19 @@ const VocationalTrailResultPage = () => {
             <div className="profile-grid">
               <div className="profile-item">
                 <span className="profile-label">Objetivo Profissional:</span>
-                <span className="profile-value highlight">{formData.professional_goal || 'Não informado'}</span>
+                <span className="profile-value highlight">{trailData.formData?.professional_goal || 'Não informado'}</span>
               </div>
               <div className="profile-item">
                 <span className="profile-label">Tecnologias de Interesse:</span>
-                <span className="profile-value">{formData.interested_technologies || 'Não informado'}</span>
+                <span className="profile-value">{trailData.formData?.interested_technologies || 'Não informado'}</span>
               </div>
               <div className="profile-item">
                 <span className="profile-label">Habilidades Atuais:</span>
-                <span className="profile-value">{formData.skills || 'Não informado'}</span>
+                <span className="profile-value">{trailData.formData?.skills || 'Não informado'}</span>
               </div>
               <div className="profile-item">
                 <span className="profile-label">Tempo Disponível:</span>
-                <span className="profile-value">{formData.available_time_week || 'Não informado'}</span>
+                <span className="profile-value">{trailData.formData?.available_time_week || 'Não informado'}</span>
               </div>
             </div>
           </div>
@@ -302,20 +236,28 @@ const VocationalTrailResultPage = () => {
             <div className="section-card">
               <h3>🛠️ Tecnologias Requeridas</h3>
               <div className="tech-tags">
-                {trailData.summary.requiredTechnologies.map((tech, index) => (
-                  <span key={index} className="tech-tag">{tech}</span>
-                ))}
+                {trailData.summary.requiredTechnologies && trailData.summary.requiredTechnologies.length > 0 ? (
+                  trailData.summary.requiredTechnologies.map((tech, index) => (
+                    <span key={index} className="tech-tag">{tech}</span>
+                  ))
+                ) : (
+                  <p style={{ color: '#666', fontStyle: 'italic' }}>Nenhuma tecnologia especificada</p>
+                )}
               </div>
             </div>
             <div className="section-card">
               <h3>📜 Certificações Sugeridas</h3>
               <div className="cert-list">
-                {trailData.summary.certifications.map((cert, index) => (
-                  <div key={index} className="cert-item">
-                    <span className="cert-icon">✓</span>
-                    <span>{cert}</span>
-                  </div>
-                ))}
+                {trailData.summary.certifications && trailData.summary.certifications.length > 0 ? (
+                  trailData.summary.certifications.map((cert, index) => (
+                    <div key={index} className="cert-item">
+                      <span className="cert-icon">✓</span>
+                      <span>{cert}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p style={{ color: '#666', fontStyle: 'italic' }}>Nenhuma certificação sugerida</p>
+                )}
               </div>
             </div>
           </div>
@@ -327,7 +269,8 @@ const VocationalTrailResultPage = () => {
               <p>Siga este cronograma passo a passo para alcançar seus objetivos</p>
             </div>
             
-            {trailData.weeks.map((week, index) => (
+            {trailData.weeks && trailData.weeks.length > 0 ? (
+              trailData.weeks.map((week, index) => (
               <div key={index} className="week-card">
                 <div className="week-header">
                   <div className="week-number">SEMANA {week.weekNumber}</div>
@@ -368,10 +311,16 @@ const VocationalTrailResultPage = () => {
                   </div>
                 </div>
               </div>
-            ))}
+            ))
+            ) : (
+              <div style={{ textAlign: 'center', padding: '40px', color: '#666' }}>
+                <p>Nenhum plano semanal disponível para esta trilha.</p>
+              </div>
+            )}
           </div>
 
           {/* Recomendações finais */}
+          {trailData.recommendations && trailData.recommendations.length > 0 && (
           <div className="recommendations-section">
             <h3>💡 Recomendações Importantes</h3>
             <div className="recommendations-list">
@@ -383,6 +332,7 @@ const VocationalTrailResultPage = () => {
               ))}
             </div>
           </div>
+          )}
 
           {/* Ações */}
           <div className="trail-actions">

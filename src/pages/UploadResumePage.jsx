@@ -87,12 +87,29 @@ const UploadResumePage = () => {
       const result = await analyzeResume(selectedFile);
 
       console.log("Resultado da análise do currículo:", result);
-      // EXEMPLO: backend retorna { id: 123 }
-      // navigate(`/analise-curriculo/${result.id}`);
+      // Redireciona para a página de resultado com o ID
+      navigate(`/analise-curriculo/${result.id}`);
 
     } catch (err) {
-      console.error(err);
-      setError("Erro ao fazer upload do currículo. Tente novamente.");
+      console.error('Erro completo:', err);
+      
+      // Mensagem de erro mais específica
+      let errorMessage = 'Erro ao fazer upload do currículo. Tente novamente.';
+      
+      if (err.message) {
+        // Tenta extrair a mensagem de erro do backend
+        if (err.message.includes('429') || err.message.includes('quota') || err.message.includes('limite')) {
+          errorMessage = 'Limite de uso da API do Gemini excedido. Por favor, aguarde alguns minutos e tente novamente.';
+        } else if (err.message.includes('API key') || err.message.includes('autenticação') || err.message.includes('expired')) {
+          errorMessage = 'Erro de autenticação com a API. A chave de API pode ter expirado. Entre em contato com o suporte.';
+        } else if (err.message.includes('PDF') || err.message.includes('arquivo')) {
+          errorMessage = err.message;
+        } else if (err.message.length > 0 && err.message.length < 200) {
+          errorMessage = err.message;
+        }
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsUploading(false);
     }

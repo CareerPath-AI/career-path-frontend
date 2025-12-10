@@ -66,7 +66,7 @@ function App() {
         <Route path="/analise-curriculo" element={<ResumeAnalysisPage />} />
         <Route path="/analise-curriculo/:id" element={<ResumeAnalysisPage />} />
         <Route path="/interview-guide" element={<InterviewGuidePage />} />
-        <Route path="/interview-guide-result" element={<InterviewGuideResultPage />} />
+        <Route path="/interview-guide-result/:id" element={<InterviewGuideResultPage />} />
         <Route path="/vocational-form" element={<VocationalFormPage />} />
         <Route path="/vocational-form-response" element={<VocationalTrailResultPage />} />
       </Routes>

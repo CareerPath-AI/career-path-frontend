@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import logo from "../assets/div.svg";
 import UserProfile from "../components/UserProfile";
+import { getDevelopmentTrails, deleteDevelopmentTrail } from "../services/authService";
 import "./StudyTrailHistoryPage.css";
 
 const StudyTrailHistoryPage = () => {
@@ -10,41 +11,70 @@ const StudyTrailHistoryPage = () => {
 
   const [ordenacao, setOrdenacao] = useState("mais-recente");
   const [paginaAtual, setPaginaAtual] = useState(1);
-  const [trilhasFiltradas, setTrilhasFiltradas] = useState([]);
+  const [trilhas, setTrilhas] = useState([]);
+  const [loading, setLoading] = useState(true);
   const itensPorPagina = 4;
 
-  const trilhas = [
-    { id: "TRL-2025-001", titulo: "Desenvolvedor Front-End React", dataCriacao: "12/11/2025" },
-    { id: "TRL-2025-002", titulo: "Especialista em Data Science e Machine Learning", dataCriacao: "08/11/2025" },
-    { id: "TRL-2025-003", titulo: "Designer UX/UI Profissional", dataCriacao: "05/11/2025" },
-    { id: "TRL-2025-004", titulo: "Engenheiro DevOps e Cloud Computing", dataCriacao: "01/11/2025" },
-    { id: "TRL-2025-005", titulo: "Product Manager", dataCriacao: "28/10/2025" },
-    { id: "TRL-2025-006", titulo: "Cybersecurity Specialist", dataCriacao: "25/10/2025" },
-    { id: "TRL-2025-007", titulo: "Mobile Developer React Native", dataCriacao: "20/10/2025" },
-    { id: "TRL-2025-008", titulo: "Backend Developer Node.js", dataCriacao: "15/10/2025" },
-    { id: "TRL-2025-009", titulo: "Full Stack Developer", dataCriacao: "10/10/2025" },
-    { id: "TRL-2025-010", titulo: "Data Analyst", dataCriacao: "05/10/2025" },
-    { id: "TRL-2025-011", titulo: "Cloud Architect", dataCriacao: "01/10/2025" },
-    { id: "TRL-2025-012", titulo: "AI Engineer", dataCriacao: "28/09/2025" },
-    { id: "TRL-2025-013", titulo: "DevOps Engineer", dataCriacao: "25/09/2025" },
-    { id: "TRL-2025-014", titulo: "Software Architect", dataCriacao: "20/09/2025" },
-    { id: "TRL-2025-015", titulo: "QA Engineer", dataCriacao: "15/09/2025" },
-    { id: "TRL-2025-016", titulo: "Scrum Master", dataCriacao: "10/09/2025" }
-  ];
+  useEffect(() => {
+    const fetchTrails = async () => {
+      try {
+        setLoading(true);
+        const response = await getDevelopmentTrails();
+        setTrilhas(response.development_trails || []);
+      } catch (err) {
+        console.error('Erro ao buscar trilhas:', err);
+        setTrilhas([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTrails();
+  }, []);
+
+  const handleDelete = async (trailId) => {
+    if (!window.confirm('Tem certeza que deseja excluir esta trilha?')) {
+      return;
+    }
+
+    try {
+      await deleteDevelopmentTrail(trailId);
+      const response = await getDevelopmentTrails();
+      setTrilhas(response.development_trails || []);
+    } catch (err) {
+      console.error('Erro ao deletar trilha:', err);
+      alert('Erro ao excluir trilha');
+    }
+  };
+
+
+  // Formatar trilhas da API
+  const formattedTrails = trilhas.map(trail => {
+    const trailData = trail.development_trail || {};
+    const profileSummary = trailData.user_profile_summary || {};
+    const goal = profileSummary.professional_goal || trailData.professional_goal || 'Trilha de Desenvolvimento';
+    
+    return {
+      id: trail.id,
+      titulo: goal,
+      dataCriacao: new Date(trail.created_at || new Date()).toLocaleDateString('pt-BR'),
+      created_at: trail.created_at
+    };
+  });
 
   const ordenarTrilhas = (lista, criterio) => {
     let t = [...lista];
-    const parseDate = d => new Date(d.split("/").reverse().join("-"));
 
-    if (criterio === "mais-recente") return t.sort((a, b) => parseDate(b.dataCriacao) - parseDate(a.dataCriacao));
-    if (criterio === "mais-antigo") return t.sort((a, b) => parseDate(a.dataCriacao) - parseDate(b.dataCriacao));
+    if (criterio === "mais-recente") {
+      return t.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    }
+    if (criterio === "mais-antigo") {
+      return t.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    }
     return t;
   };
 
-  useEffect(() => {
-    setTrilhasFiltradas(ordenarTrilhas(trilhas, ordenacao));
-    setPaginaAtual(1);
-  }, [ordenacao]);
+  const trilhasFiltradas = ordenarTrilhas(formattedTrails, ordenacao);
 
   const indexUltimo = paginaAtual * itensPorPagina;
   const trilhasPaginaAtual = trilhasFiltradas.slice(indexUltimo - itensPorPagina, indexUltimo);
@@ -98,26 +128,65 @@ const StudyTrailHistoryPage = () => {
         </div>
 
         <div className="lista-card">
-          {trilhasPaginaAtual.map((t, i) => (
-            <div className="card" key={t.id}>
-              <div className="info">
-                <h3>{t.titulo}</h3>
-                <p>Criada em <strong>{t.dataCriacao}</strong></p>
-                <p>ID: <span className="id">{t.id}</span></p>
-              </div>
-              <button className="arrow" onClick={() => navigate('/vocational-form-response', { 
-                state: { 
-                  formData: {
-                    professional_goal: t.titulo.split(' ').slice(-2).join(' '),
-                    // outros dados mockados conforme necessário
-                  }
-                } 
-              })}>
-                {">"}
-              </button>
-              {i < trilhasPaginaAtual.length - 1 && <div className="divider" />}
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '40px' }}>
+              <p>Carregando trilhas...</p>
             </div>
-          ))}
+          ) : trilhasPaginaAtual.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+              <div style={{ fontSize: '48px', marginBottom: '20px' }}>📚</div>
+              <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '10px', color: '#333' }}>
+                Nenhuma trilha de estudo encontrada
+              </h3>
+              <p style={{ color: '#666', marginBottom: '30px' }}>
+                Você ainda não criou nenhuma trilha de desenvolvimento. Crie sua primeira trilha personalizada!
+              </p>
+              <button 
+                onClick={() => navigate('/vocational-form')}
+                style={{
+                  padding: '12px 24px',
+                  background: '#2563EB',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  cursor: 'pointer'
+                }}
+              >
+                Criar Primeira Trilha
+              </button>
+            </div>
+          ) : (
+            trilhasPaginaAtual.map((t, i) => (
+              <div className="card" key={t.id}>
+                <div className="info">
+                  <h3>{t.titulo}</h3>
+                  <p>Criada em <strong>{t.dataCriacao}</strong></p>
+                  <p>ID: <span className="id">{t.id}</span></p>
+                </div>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button className="arrow" onClick={() => navigate(`/trail/${t.id}`)}>
+                    {">"}
+                  </button>
+                  <button 
+                    onClick={() => handleDelete(t.id)}
+                    style={{ 
+                      background: '#dc3545', 
+                      color: 'white', 
+                      padding: '8px 12px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Excluir
+                  </button>
+                </div>
+                {i < trilhasPaginaAtual.length - 1 && <div className="divider" />}
+              </div>
+            ))
+          )}
         </div>
 
         <div className="pagination">

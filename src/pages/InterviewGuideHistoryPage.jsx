@@ -1,66 +1,105 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './InterviewGuideHistoryPage.css';
 import logo from '../assets/div.svg';
 import UserProfile from '../components/UserProfile';
+import { getInterviewGuides, deleteInterviewGuide } from '../services/authService';
 
 const InterviewGuideHistoryPage = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = JSON.parse(localStorage.getItem("user") || "null");
+  const [guides, setGuides] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Dados mockados para guias de entrevista
-  const mockGuides = [
-    {
-      id: 1,
-      title: "Desenvolvedor Front-End Júnior",
-      date: "15/01/2025",
-      description: "Guia completo para entrevista técnica e comportamental",
-      status: "completo"
-    },
-    {
-      id: 2,
-      title: "Analista de Marketing Digital",
-      date: "10/01/2025",
-      description: "Perguntas estratégicas para avaliar expertise em marketing",
-      status: "completo"
-    },
-    {
-      id: 3,
-      title: "Engenheiro de Dados Sênior",
-      date: "05/01/2025",
-      description: "Avaliação técnica profunda em arquitetura de dados",
-      status: "completo"
-    },
-    {
-      id: 4,
-      title: "Designer UX/UI Pleno",
-      date: "28/12/2024",
-      description: "Perguntas focadas em processo criativo e experiência do usuário",
-      status: "completo"
-    },
-    {
-      id: 5,
-      title: "Gerente de Projetos",
-      date: "20/12/2024",
-      description: "Avaliação de liderança e gestão de equipes",
-      status: "completo"
-    },
-    {
-      id: 6,
-      title: "Desenvolvedor Full Stack",
-      date: "18/12/2024",
-      description: "Entrevista técnica com foco em React e Node.js",
-      status: "completo"
+  useEffect(() => {
+    const fetchGuides = async () => {
+      try {
+        setLoading(true);
+        const response = await getInterviewGuides(0, 100);
+        
+        // Valida a estrutura da resposta
+        if (response && Array.isArray(response.interview_guides)) {
+          setGuides(response.interview_guides);
+        } else if (response && Array.isArray(response)) {
+          // Caso a resposta seja diretamente um array
+          setGuides(response);
+        } else {
+          console.warn('Resposta da API em formato inesperado:', response);
+          setGuides([]);
+        }
+      } catch (err) {
+        console.error('Erro ao buscar guias:', err);
+        setGuides([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGuides();
+  }, []);
+
+  const handleDelete = async (guideId) => {
+    if (!window.confirm('Tem certeza que deseja excluir este guia?')) {
+      return;
     }
-  ];
+
+    try {
+      await deleteInterviewGuide(guideId);
+      const response = await getInterviewGuides(0, 100);
+      setGuides(response.interview_guides || []);
+    } catch (err) {
+      console.error('Erro ao deletar guia:', err);
+      alert('Erro ao excluir guia');
+    }
+  };
 
   const handleBack = () => {
     navigate('/home');
   };
 
   const handleViewGuide = (guideId) => {
-    navigate(`/interview-guide-result?id=${guideId}`);
+    navigate(`/interview-guide-result/${guideId}`);
   };
+
+  // Formatar guias da API
+  const formattedGuides = guides.map(guide => {
+    try {
+      const guideData = guide.interview_guide || {};
+      const overview = guideData.preparation_overview || guideData.overview || '';
+      
+      // Tenta extrair título da descrição da vaga ou do overview
+      let jobTitle = 'Guia de Entrevista';
+      if (overview) {
+        const titleMatch = overview.match(/(?:para|como|vaga|posição|de)\s+([^-–—]+?)(?:[-–—]|$)/i);
+        if (titleMatch) {
+          jobTitle = titleMatch[1].trim();
+        } else {
+          // Se não encontrar, pega as primeiras palavras do overview
+          const words = overview.split(' ').slice(0, 5).join(' ');
+          jobTitle = words.length > 50 ? words.substring(0, 50) + '...' : words;
+        }
+      }
+      
+      return {
+        id: guide.id,
+        title: jobTitle,
+        date: guide.created_at 
+          ? new Date(guide.created_at).toLocaleDateString('pt-BR')
+          : new Date().toLocaleDateString('pt-BR'),
+        description: overview || 'Guia completo para entrevista',
+        created_at: guide.created_at
+      };
+    } catch (error) {
+      console.error('Erro ao formatar guia:', error, guide);
+      return {
+        id: guide.id || 0,
+        title: 'Guia de Entrevista',
+        date: new Date().toLocaleDateString('pt-BR'),
+        description: 'Guia completo para entrevista',
+        created_at: guide.created_at
+      };
+    }
+  });
 
   const handleCreateNewGuide = () => {
     navigate('/interview-guide');
@@ -108,7 +147,7 @@ const InterviewGuideHistoryPage = () => {
         <div className="dashboard-grid" style={{ gridTemplateColumns: '1fr' }}>
           <section className="box">
             <div className="box-header">
-              <h2>Seus Guias de Entrevista ({mockGuides.length})</h2>
+              <h2>Seus Guias de Entrevista ({formattedGuides.length})</h2>
               <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
                 <span style={{ fontSize: '14px', color: '#666' }}>Ordenar por:</span>
                 <select 
@@ -126,44 +165,92 @@ const InterviewGuideHistoryPage = () => {
               </div>
             </div>
 
-            {mockGuides.map((guide) => (
-              <div 
-                key={guide.id} 
-                className="guide-item" 
-                style={{ 
-                  cursor: 'pointer',
-                  padding: '20px',
-                  margin: '0 -24px',
-                  transition: 'background-color 0.2s ease'
-                }} 
-                onClick={() => handleViewGuide(guide.id)}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <div style={{ flex: 1 }}>
-                    <h3 style={{ marginBottom: '8px', fontSize: '18px' }}>{guide.title}</h3>
-                    <p style={{ color: '#666', marginBottom: '8px', fontSize: '14px' }}>
-                      {guide.description}
-                    </p>
-                    <span className="time-info">Criado em: {guide.date}</span>
-                  </div>
-                  <button 
-                    className="see-more"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleViewGuide(guide.id);
-                    }}
-                    style={{ 
-                      background: '#f0f7ff',
-                      padding: '8px 16px',
-                      borderRadius: '6px',
-                      fontWeight: '500'
-                    }}
-                  >
-                    Visualizar
-                  </button>
-                </div>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '40px' }}>
+                <p>Carregando guias...</p>
               </div>
-            ))}
+            ) : formattedGuides.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '60px 20px' }}>
+                <div style={{ fontSize: '48px', marginBottom: '20px' }}>💼</div>
+                <h3 style={{ fontSize: '20px', fontWeight: '600', marginBottom: '10px', color: '#333' }}>
+                  Nenhum guia de entrevista encontrado
+                </h3>
+                <p style={{ color: '#666', marginBottom: '30px' }}>
+                  Você ainda não criou nenhum guia de entrevista. Crie seu primeiro guia personalizado!
+                </p>
+                <button 
+                  onClick={handleCreateNewGuide}
+                  style={{
+                    padding: '12px 24px',
+                    background: '#2563EB',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Criar Primeiro Guia
+                </button>
+              </div>
+            ) : (
+              formattedGuides.map((guide) => (
+                <div 
+                  key={guide.id} 
+                  className="guide-item" 
+                  style={{ 
+                    cursor: 'pointer',
+                    padding: '20px',
+                    margin: '0 -24px',
+                    transition: 'background-color 0.2s ease'
+                  }} 
+                  onClick={() => handleViewGuide(guide.id)}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{ marginBottom: '8px', fontSize: '18px' }}>{guide.title}</h3>
+                      <p style={{ color: '#666', marginBottom: '8px', fontSize: '14px' }}>
+                        {guide.description}
+                      </p>
+                      <span className="time-info">Criado em: {guide.date}</span>
+                    </div>
+                    <div style={{ display: 'flex', gap: '10px' }}>
+                      <button 
+                        className="see-more"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleViewGuide(guide.id);
+                        }}
+                        style={{ 
+                          background: '#f0f7ff',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontWeight: '500'
+                        }}
+                      >
+                        Visualizar
+                      </button>
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(guide.id);
+                        }}
+                        style={{ 
+                          background: '#dc3545',
+                          color: 'white',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontWeight: '500'
+                        }}
+                      >
+                        Excluir
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </section>
         </div>
 
