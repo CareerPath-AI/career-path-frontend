@@ -1,0 +1,24 @@
+services:
+  frontend:
+    container_name: career-path-frontend
+    build:
+      context: .
+      args:
+        VITE_API_URL: http://career-path-backend:8000  
+    ports:
+      - "80:80"
+    networks:
+      - shared-network
+    depends_on:
+      - backend_check
+    restart: unless-stopped
+
+  backend_check:
+    image: alpine:latest
+    command: sh -c "while ! nc -z career-path-backend 8000; do sleep 1; done; exit 0"
+    networks:
+      - shared-network
+
+networks:
+  shared-network:
+    external: true   

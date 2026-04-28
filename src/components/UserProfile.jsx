@@ -25,7 +25,6 @@ const UserProfile = ({ user, onLogout }) => {
   };
 
   const handleConfiguracoes = () => {
-    // Navegar para configurações
     navigate("/config");
     setIsDropdownOpen(false);
   };
