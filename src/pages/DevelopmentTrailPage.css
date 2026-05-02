@@ -393,3 +393,172 @@
   }
 }
 
+/* Novos estilos para os Sprints */
+.trail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+}
+.meta-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #eef2ff;
+  color: #4f46e5;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+}
+.sprints-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+.sprint-card {
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 24px;
+  background: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+.sprint-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.sprint-icon {
+  font-size: 24px;
+}
+.sprint-title {
+  color: #111827;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+.sprint-goal {
+  color: #4b5563;
+  font-size: 15px;
+  margin-bottom: 24px;
+  padding: 12px;
+  background: #f9fafb;
+  border-left: 4px solid #3b82f6;
+  border-radius: 4px;
+}
+.sprint-section {
+  margin-bottom: 24px;
+}
+.sprint-section:last-child {
+  margin-bottom: 0;
+}
+.days-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 12px;
+}
+.day-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  border-radius: 8px;
+  background: #f9fafb;
+  border-left: 4px solid #e5e7eb;
+}
+.day-item.type-theory { border-left-color: #3b82f6; }
+.day-item.type-practice { border-left-color: #10b981; }
+.day-item.type-review { border-left-color: #f59e0b; }
+.day-number {
+  font-weight: 700;
+  color: #374151;
+  min-width: 60px;
+}
+.day-content {
+  flex: 1;
+}
+.day-content strong {
+  display: block;
+  color: #111827;
+  margin-bottom: 4px;
+}
+.day-content p {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0;
+}
+.day-badge {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  background: #e5e7eb;
+  color: #374151;
+}
+.type-theory .day-badge { background: #dbeafe; color: #1e40af; }
+.type-practice .day-badge { background: #d1fae5; color: #065f46; }
+.type-review .day-badge { background: #fef3c7; color: #92400e; }
+.exercises-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+.exercise-card {
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background: white;
+}
+.exercise-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.exercise-header h4 {
+  margin: 0;
+  color: #111827;
+  font-size: 16px;
+}
+.difficulty-badge {
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+.diff-beginner .difficulty-badge { background: #d1fae5; color: #065f46; }
+.diff-intermediate .difficulty-badge { background: #fef3c7; color: #92400e; }
+.diff-advanced .difficulty-badge { background: #fee2e2; color: #991b1b; }
+.exercise-card p {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0;
+}
+.project-card {
+  padding: 20px;
+  border-radius: 8px;
+  background: linear-gradient(to right, #f3e8ff, #ede9fe);
+  border: 1px solid #ddd6fe;
+  margin-top: 12px;
+}
+.project-card h4 {
+  margin: 0 0 8px 0;
+  color: #4c1d95;
+  font-size: 18px;
+}
+.project-card p {
+  color: #5b21b6;
+  margin: 0 0 16px 0;
+}
+.project-meta {
+  display: flex;
+  gap: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #6d28d9;
+}

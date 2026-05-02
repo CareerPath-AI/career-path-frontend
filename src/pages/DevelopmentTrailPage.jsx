@@ -24,7 +24,7 @@ const DevelopmentTrailPage = () => {
       try {
         setLoading(true);
         setError('');
-        
+
         // Verifica se há token de autenticação
         const token = localStorage.getItem('access_token');
         if (!token) {
@@ -42,7 +42,7 @@ const DevelopmentTrailPage = () => {
           status: err.status,
           id: id
         });
-        
+
         // Mensagens de erro mais específicas
         if (err.status === 404 || err.message.includes('404') || err.message.includes('não encontrada')) {
           setError(`Trilha com ID ${id} não encontrada. Verifique se o ID está correto ou se você tem acesso a esta trilha.`);
@@ -77,56 +77,12 @@ const DevelopmentTrailPage = () => {
     alert('Funcionalidade de exportar PDF em desenvolvimento');
   };
 
-  const formatWeeks = (developmentPhases) => {
-    if (!developmentPhases || !Array.isArray(developmentPhases)) {
-      return [];
-    }
-
-    // Converte fases em semanas
-    const weeks = [];
-    let weekNumber = 1;
-
-    developmentPhases.forEach((phase, index) => {
-      // Extrai duração da fase (ex: "2-3 semanas" ou "2 meses")
-      const duration = phase.duration || '';
-      const weeksMatch = duration.match(/(\d+)\s*semanas?/i);
-      const monthsMatch = duration.match(/(\d+)\s*meses?/i);
-      
-      let phaseWeeks = 1;
-      if (weeksMatch) {
-        phaseWeeks = parseInt(weeksMatch[1]);
-      } else if (monthsMatch) {
-        phaseWeeks = parseInt(monthsMatch[1]) * 4; // Aproximação: 1 mês = 4 semanas
-      }
-
-      // Cria semanas baseadas na fase
-      for (let i = 0; i < phaseWeeks && weekNumber <= 6; i++) {
-        weeks.push({
-          weekNumber: weekNumber,
-          phase: phase.phase || `Fase ${index + 1}`,
-          focus: phase.focus || '',
-          topics: phase.topics || [],
-          projects: phase.projects || [],
-          learningOutcomes: phase.learning_outcomes || [],
-        });
-        weekNumber++;
-      }
-    });
-
-    // Preenche até 6 semanas se necessário
-    while (weeks.length < 6) {
-      weeks.push({
-        weekNumber: weeks.length + 1,
-        phase: 'Consolidação',
-        focus: 'Revisão e prática',
-        topics: ['Revisão dos tópicos anteriores'],
-        projects: ['Projeto de consolidação'],
-        learningOutcomes: ['Aplicação prática dos conhecimentos'],
-      });
-    }
-
-    return weeks.slice(0, 6); // Garante máximo de 6 semanas
-  };
+  const developmentData = trail?.development_trail || {};
+  const sprints = developmentData.sprints || [];
+  const metadata = developmentData.trail_metadata || {};
+  const profileSummary = developmentData.user_profile_summary || {};
+  const resources = developmentData.recommended_resources || {};
+  const careerTips = developmentData.career_tips || [];
 
   if (loading) {
     return (
@@ -163,9 +119,6 @@ const DevelopmentTrailPage = () => {
     );
   }
 
-  const developmentData = trail.development_trail || {};
-  const weeks = formatWeeks(developmentData.development_phases || []);
-
   return (
     <div className="trail-container">
       {/* Header component */}
@@ -176,77 +129,90 @@ const DevelopmentTrailPage = () => {
         <div className="trail-card">
           <div className="trail-card-header">
             <h1 className="trail-title">Plano de Desenvolvimento Personalizado</h1>
-            {developmentData.user_profile_summary && (
+            {profileSummary.current_profile && (
               <p className="trail-subtitle">
-                {developmentData.user_profile_summary.current_profile || 
-                 'Trilha de estudos personalizada para acelerar sua carreira'}
+                {profileSummary.current_profile}
               </p>
             )}
+            <div className="trail-meta">
+              <div className="meta-badge">
+                <span className="meta-icon">🏃</span>
+                <span>{metadata.total_sprints || 0} Sprints</span>
+              </div>
+              <div className="meta-badge">
+                <span className="meta-icon">⏱️</span>
+                <span>{metadata.total_duration_days || 0} dias totais</span>
+              </div>
+              {metadata.difficulty_progression && (
+                <div className="meta-badge">
+                  <span className="meta-icon">📈</span>
+                  <span>{metadata.difficulty_progression}</span>
+                </div>
+              )}
+            </div>
           </div>
 
-          <div className="weeks-container">
-            {weeks.map((week, index) => (
-              <div key={index} className="week-card">
-                <div className="week-header">
-                  <div className="week-icon">📅</div>
-                  <h2 className="week-title">Semana {week.weekNumber}</h2>
+          <div className="sprints-container">
+            {sprints.map((sprint, index) => (
+              <div key={index} className="sprint-card">
+                <div className="sprint-header">
+                  <div className="sprint-icon">🚀</div>
+                  <h2 className="sprint-title">Sprint {sprint.sprint_number}: {sprint.title}</h2>
                 </div>
-                
-                {week.focus && (
-                  <p className="week-focus">{week.focus}</p>
+
+                {sprint.sprint_goal && (
+                  <p className="sprint-goal"><strong>Objetivo:</strong> {sprint.sprint_goal}</p>
                 )}
 
-                {week.topics && week.topics.length > 0 && (
-                  <div className="week-content">
-                    <h3 className="content-title">Tópicos:</h3>
-                    <ul className="content-list">
-                      {week.topics.map((topic, topicIndex) => {
-                        // Se o tópico tem " - " ou ": ", separa título e descrição
-                        const parts = topic.split(/ - |: /);
-                        const title = parts[0];
-                        const description = parts.length > 1 ? parts.slice(1).join(' - ') : '';
-                        return (
-                          <li key={topicIndex} className="topic-item">
-                            <span className="bullet blue"></span>
-                            <span className="item-text">
-                              <strong>{title}</strong>
-                              {description && ` - ${description}`}
-                            </span>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                )}
-
-                {week.projects && week.projects.length > 0 && (
-                  <div className="week-content">
-                    <h3 className="content-title">Projetos Práticos:</h3>
-                    <ul className="content-list">
-                      {week.projects.map((project, projectIndex) => {
-                        const isFinalProject = project.toLowerCase().includes('final') || project.toLowerCase().includes('completa');
-                        return (
-                          <li key={projectIndex} className="project-item">
-                            <span className={`bullet ${isFinalProject ? 'orange' : 'green'}`}></span>
-                            <span className="item-text">{project}</span>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  </div>
-                )}
-
-                {week.learningOutcomes && week.learningOutcomes.length > 0 && (
-                  <div className="week-content">
-                    <h3 className="content-title">Resultados Esperados:</h3>
-                    <ul className="content-list">
-                      {week.learningOutcomes.map((outcome, outcomeIndex) => (
-                        <li key={outcomeIndex} className="outcome-item">
-                          <span className="bullet blue"></span>
-                          <span className="item-text">{outcome}</span>
-                        </li>
+                {sprint.days && sprint.days.length > 0 && (
+                  <div className="sprint-section">
+                    <h3 className="content-title">Cronograma (15 Dias):</h3>
+                    <div className="days-timeline">
+                      {sprint.days.map((dayObj, dayIndex) => (
+                        <div key={dayIndex} className={`day-item type-${dayObj.study_type}`}>
+                          <div className="day-number">Dia {dayObj.day}</div>
+                          <div className="day-content">
+                            <strong>{dayObj.topic}</strong>
+                            <p>{dayObj.description}</p>
+                          </div>
+                          <div className="day-badge">
+                            {dayObj.study_type === 'theory' ? 'Teoria' :
+                              dayObj.study_type === 'practice' ? 'Prática' : 'Revisão'}
+                          </div>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
+                  </div>
+                )}
+
+                {sprint.practical_exercises && sprint.practical_exercises.length > 0 && (
+                  <div className="sprint-section">
+                    <h3 className="content-title">Exercícios Práticos:</h3>
+                    <div className="exercises-grid">
+                      {sprint.practical_exercises.map((ex, exIndex) => (
+                        <div key={exIndex} className={`exercise-card diff-${ex.difficulty}`}>
+                          <div className="exercise-header">
+                            <h4>{ex.title}</h4>
+                            <span className="difficulty-badge">{ex.difficulty}</span>
+                          </div>
+                          <p>{ex.description}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {sprint.revision_project && (
+                  <div className="sprint-section">
+                    <h3 className="content-title">Projeto de Revisão:</h3>
+                    <div className="project-card">
+                      <h4>{sprint.revision_project.title}</h4>
+                      <p>{sprint.revision_project.description}</p>
+                      <div className="project-meta">
+                        <span>⏳ {sprint.revision_project.estimated_hours}h estimadas</span>
+                        <span>📚 Sprints cobertos: {sprint.revision_project.covers_sprints?.join(', ')}</span>
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
